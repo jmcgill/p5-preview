@@ -1,0 +1,139 @@
+<html>
+<head>
+    <script src="p5.min.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="file://{{ filename }}"></script>
+    <script type="text/javascript">
+        const parameters = {
+            scale: {{ scale }},
+            seed: {{ seed }}
+        }
+    </script>
+    <script type="text/javascript" src="./renderer.js"></script>
+    <style>
+        body {
+            background: #efefef;
+            margin: 0px;
+            overflow: hidden;
+            padding: 0px;
+            overflow: {{ overflow }};
+        }
+
+        #buttons {
+            text-align: center;
+            background: white;
+            margin: 0px;
+            width: 100%;
+        }
+
+        #cover {
+            height: {{ scaledHeight }};
+            width: {{ scaledWidth }};
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #efefef;
+        }
+
+        .box {
+            position: relative;
+            width: {{ scaledWidth }};
+            height: {{ scaledHeight }};
+            margin: 20 auto;
+        }
+
+        .box::before,
+        .box::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            width: 40%;
+            height: 10px;
+            box-shadow: 0 5px 14px rgba(0,0,0,.7);
+            z-index: -1;
+            transition: all .3s ease-in-out;
+        }
+
+        .box::before {
+            left: 15px;
+            transform: skew(-5deg) rotate(-5deg);
+        }
+
+        .box::after {
+            right: 15px;
+            transform: skew(5deg) rotate(5deg);
+        }
+
+        .box:hover::before,
+        .box:hover::after {
+            box-shadow: 0 2px 14px rgba(0,0,0,.4);
+        }
+
+        .box:hover::before {
+            left: 5px;
+        }
+
+        .box:hover::after {
+            right: 5px;
+        }
+
+        button {
+            background: tomato;
+            color: white;
+            font-family: Helvetica;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        button:hover {
+            box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.2);
+        }
+    </style>
+    <script type="text/javascript">
+        // Wrap our canvas element to make styling easier
+        document.addEventListener('DOMContentLoaded', (event) => {
+            window.setTimeout(function() {
+                $("#defaultCanvas0").appendTo($("#cover"));
+            }, 0);
+        });
+    </script>
+</head>
+<body>
+<div id="buttons">
+    <button id="refresh">Refresh</button>
+    <button id="snapshot">Snapshot</button>
+    <button id="zoom">Zoom</button>
+    <button id="fit">Fit</button>
+</div>
+<div id="paper" class="box">
+    <div id="cover">
+</div>
+</div>
+<script type="text/javascript">
+    document.getElementById('fit').addEventListener('click', function() {
+        fit();
+    });
+
+    document.getElementById('zoom').addEventListener('click', function() {
+        zoom();
+    });
+
+    document.getElementById('refresh').addEventListener('click', function() {
+        refresh();
+    });
+
+    document.getElementById('snapshot').addEventListener('click', function() {
+        snapshot();
+    });
+</script>
+</body>
+</html>
