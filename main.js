@@ -6,7 +6,7 @@ const chokidar = require("chokidar");
 const handlebars = require('handlebars');
 const moment = require('moment');
 
-const saverTemplate = handlebars.compile('' + fs.readFileSync('saver-template.html'));
+const saverTemplate = handlebars.compile('' + fs.readFileSync('templates/saver-template.html'));
 
 // Default to fit
 let inFitMode = true;
@@ -25,7 +25,7 @@ function reload() {
   const args = process.argv;
   const filename = process.argv[2];
 
-  const template = handlebars.compile('' + fs.readFileSync('template.html'));
+  const template = handlebars.compile('' + fs.readFileSync('templates/template.html'));
   fs.writeFileSync('temp.html', template({
     filename: filename,
     scale,
@@ -49,19 +49,25 @@ function setupComplete() {
 }
 
 function fit(height, width, windowHeight, windowWidth) {
- inFitMode = true;
+  console.log('Running fit function');
+  console.log('Requested height/width', height, width);
+  console.log('Window height/width', windowHeight, windowWidth);
+  inFitMode = true;
 
   const heightScale = (windowHeight - 120) / height;
   const widthScale = windowWidth / width;
+  console.log('Scaling factor: ', heightScale, widthScale);
 
-  console.log(height, windowHeight, width, windowWidth, heightScale, widthScale);
   const oldScale = scale;
   scale = Math.min(heightScale, widthScale);
 
   scaledHeight = scale * height;
   scaledWidth = scale * width;
 
+  console.log('Scale is: ', scale, oldScale);
+
   if (Math.abs(scale - oldScale) > 0.01) {
+    console.log('Triggering reload');
     reload();
   }
 }
@@ -152,7 +158,7 @@ function createWindow () {
     fs.writeFileSync('config.json', JSON.stringify(mainWindow.getBounds()));
   });
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   reload();
 
   const watcher = chokidar.watch(process.argv[2], {

@@ -2,14 +2,16 @@
 <head>
     <script src="p5.min.js"></script>
     <script src="jquery.min.js"></script>
+    <script src="jquery.min.js"></script>
     <script src="file://{{ filename }}"></script>
+    <!--<script src="file:///Users/jmcgill/src/p5.js-hpgl/dist/p5.hpgl.js"></script>-->
     <script type="text/javascript">
         const parameters = {
             scale: {{ scale }},
             seed: {{ seed }}
         }
     </script>
-    <script type="text/javascript" src="./renderer.js"></script>
+    <script type="text/javascript" src="renderer.js"></script>
     <style>
         body {
             background: #efefef;
@@ -50,7 +52,7 @@
         .box::after {
             content: '';
             position: absolute;
-            bottom: 10px;
+            bottom: 12px;
             width: 40%;
             height: 10px;
             box-shadow: 0 5px 14px rgba(0,0,0,.7);
@@ -102,6 +104,7 @@
         // Wrap our canvas element to make styling easier
         document.addEventListener('DOMContentLoaded', (event) => {
             window.setTimeout(function() {
+                console.log('Wrapping element');
                 $("#defaultCanvas0").appendTo($("#cover"));
             }, 0);
         });

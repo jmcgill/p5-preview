@@ -8,15 +8,24 @@
 const { remote, ipcRenderer } = require('electron');
 const main = remote.require('./main.js');
 const $ = require('./jquery.min');
+const hpgl = require('./hpgl/index.js');
 
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+hpgl(p5);
+
+// window.setTimeout(function() {
+//     setupComplete();
+// }, 500);
 
 ipcRenderer.on('trigger-fit', () => {
     console.log('triggering fit');
     const bounds = remote.getCurrentWindow().getBounds();
     const height = $('#defaultCanvas0').height();
     const width = $('#defaultCanvas0').width();
-    main.fit(height, width,bounds.height, bounds.width, false);
+    console.log('Current height is: ', height, width);
+    //main.fit(height, width,bounds.height, bounds.width, false);
+    main.fit(requestedHeight, requestedWidth, bounds.height, bounds.width, false);
+    console.log('Finished calling main fit');
 });
 
 function fit() {
@@ -29,9 +38,9 @@ function fit() {
 ipcRenderer.on('trigger-zoom', () => {
     console.log('triggering zoom');
     function zoom() {
-        const height = $('#defaultCanvas0').height();
-        const width = $('#defaultCanvas0').width();
-        main.zoom(height, width, false);
+       // const height = $('#defaultCanvas0').height();
+       // const width = $('#defaultCanvas0').width();
+        main.zoom(requestedHeight, requestedWidth, false);
     }
 });
 
@@ -50,6 +59,6 @@ function snapshot() {
 }
 
 function setupComplete() {
-    console.log('Calling setup compolete');
+    console.log('Calling setup complete');
     main.setupComplete();
 }
