@@ -46,6 +46,7 @@ module.exports = function(p5) {
      */
     var _createCanvas = p5.prototype.createCanvas;
     p5.prototype.createCanvas = function(w, h, renderer) {
+        console.log('CALLING WRAPPED CREATE CANVSA', renderer, constants.NoHPGL);
         var graphics = _createCanvas.apply(this, arguments);
         if (renderer === constants.HPGL) {
             var c = graphics.elt;

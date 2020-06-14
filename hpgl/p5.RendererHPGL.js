@@ -12,6 +12,7 @@ module.exports = function(p5) {
      * @param {Bool} isMainCanvas
      */
     function RendererHPGL(elt, pInst, isMainCanvas, plotForReal) {
+        console.log('**** CREATING HPGL INSTANCE');
         // TODO(jimmy): Configurable log
         console.log('Initializing HPGL renderer');
 
@@ -123,6 +124,14 @@ module.exports = function(p5) {
         return this;
     };
 
+    RendererHPGL.prototype.stroke = function() {
+        console.log('Stroke - do nothing');
+    };
+
+    RendererHPGL.prototype.strokeWeight = function() {
+        console.log('Stroke - do nothing');
+    };
+
     RendererHPGL.prototype.rect = function(x1, y1, w, h) {
         console.log('Rect');
         this.operations.push(RendererHPGL.prototype.rectAsync.bind(this, x1, y1, w, h));
@@ -152,6 +161,37 @@ module.exports = function(p5) {
         return this;
     };
 
+    RendererHPGL.prototype.text = function(msg, x, y) {
+        console.log('Text');
+        this.operations.push(RendererHPGL.prototype.textAsync.bind(this, msg, x, y));
+    };
+
+    // TODO(jimmy): Handle Rect Mode, optional hight and radiused corners
+    RendererHPGL.prototype.textAsync = function(msg, x, y) {
+        console.log('Text Async', msg, x, y);
+
+        // Apply the current transforms
+        const p1 = this.current_transform.transformPair(x, y);
+
+        const base = new affine.translation(215 / 2, 279 / 2);
+        base.rightComposeWith(new affine.rotation(Math.PI / 2));
+        base.rightComposeWith(new affine.translation(-140, -170));
+        base.rightComposeWith(this.current_transform);
+        const pp1 = base.transformPair(x, y);
+
+        console.log('Drawing text at: ', pp1[0], pp1[1]);
+
+        if (this.plotter) {
+            console.log('Really plotting text');
+            this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
+            this.plotter.drawText(msg, {
+                rotation: 90
+            });
+        }
+
+        p5.Renderer2D.prototype.text.call(this, msg, p1[0], p1[1]);
+    };
+
     RendererHPGL.prototype.translate = function(x, y) {
         console.log('Translate');
         this.operations.push(RendererHPGL.prototype.translateAsync.bind(this, x, y));
@@ -161,6 +201,17 @@ module.exports = function(p5) {
         console.log('Translate Async');
         const translate = new affine.translation(x, y);
         this.current_transform.rightComposeWith(translate);
+    };
+
+    RendererHPGL.prototype.scale = function(f) {
+        console.log('Scale');
+        this.operations.push(RendererHPGL.prototype.scaleAsync.bind(this, f));
+    };
+
+    RendererHPGL.prototype.scaleAsync = function(f) {
+        console.log('Scale Async');
+        const scale = new affine.scaling(f, f);
+        this.current_transform.rightComposeWith(scale);
     };
 
     RendererHPGL.prototype.rotate = function(rads) {
@@ -175,18 +226,24 @@ module.exports = function(p5) {
     };
 
     RendererHPGL.prototype.push = function(x, y) {
+        console.log('Scheduling push');
         this.operations.push(RendererHPGL.prototype.pushAsync.bind(this, x, y));
     };
 
     RendererHPGL.prototype.pushAsync = function(x, y) {
+        console.log(`Pushing current transform`);
         this.transforms.push(this.current_transform.copy());
+        console.log(`${this.transforms.length} transforms on the stack after push`);
     };
 
     RendererHPGL.prototype.pop = function(x, y) {
+        console.log('Scheduling pop');
         this.operations.push(RendererHPGL.prototype.popAsync.bind(this, x, y));
     };
 
     RendererHPGL.prototype.popAsync = function(x, y) {
+        console.log(`Popping current transform`);
+        console.log(`${this.transforms.length} transforms on the stack before pop`);
         this.current_transform = this.transforms.pop();
     };
 

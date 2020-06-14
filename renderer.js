@@ -9,6 +9,8 @@ const { remote, ipcRenderer } = require('electron');
 const main = remote.require('./main.js');
 const $ = require('./jquery.min');
 const hpgl = require('./hpgl/index.js');
+const fs = remote.require('fs');
+const randomWords = remote.require('random-words');
 
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 hpgl(p5);

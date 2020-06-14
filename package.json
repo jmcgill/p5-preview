@@ -27,6 +27,7 @@
     "handlebars": "^4.7.3",
     "hpgl": "^0.8.7-10",
     "moment": "^2.24.0",
+    "random-words": "^1.1.1",
     "serialport": "^9.0.0"
   }
 }
