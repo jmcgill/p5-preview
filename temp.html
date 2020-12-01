@@ -7,12 +7,12 @@
     <!--<script language="javascript" type="text/javascript" src="https://dickrnn.github.io/json/dick.v2.1.small.gen.js"></script>-->
     <script language="javascript" type="text/javascript" src="sketchrnn/lib/numjs.js"></script>
     <script language="javascript" type="text/javascript" src="sketchrnn/lib/sketch_rnn.js"></script>
-    <script src="file:///Users/jmcgill/src/p5-preview/examples/simple_predict.js"></script>
+    <script src="file:///Users/jimmy/src/p5-preview/examples/traced.js"></script>
     <!--<script src="file:///Users/jmcgill/src/p5.js-hpgl/dist/p5.hpgl.js"></script>-->
     <script type="text/javascript">
         const parameters = {
-            scale: 2.6057347670250897,
-            seed: 5
+            scale: 1080,
+            seed: 48283325547
         }
     </script>
     <script type="text/javascript" src="renderer.js"></script>
@@ -33,10 +33,10 @@
         }
 
         #cover {
-            height: 727;
-            width: 560.2329749103943;
+            height: 1080;
+            width: 1080;
             margin: 0 auto;
-            overflow: hidden;
+            overflow: scroll;
         }
 
         body {
@@ -45,47 +45,47 @@
             background: #efefef;
         }
 
-        .box {
-            position: relative;
-            width: 560.2329749103943;
-            height: 727;
-            margin: 20 auto;
-        }
+        /*.box {*/
+        /*    position: relative;*/
+        /*    width: 1080;*/
+        /*    height: 1080;*/
+        /*    margin: 20 auto;*/
+        /*}*/
 
-        .box::before,
-        .box::after {
-            content: '';
-            position: absolute;
-            bottom: 12px;
-            width: 40%;
-            height: 10px;
-            box-shadow: 0 5px 14px rgba(0,0,0,.7);
-            z-index: -1;
-            transition: all .3s ease-in-out;
-        }
+        /*.box::before,*/
+        /*.box::after {*/
+        /*    content: '';*/
+        /*    position: absolute;*/
+        /*    bottom: 12px;*/
+        /*    width: 40%;*/
+        /*    height: 10px;*/
+        /*    box-shadow: 0 5px 14px rgba(0,0,0,.7);*/
+        /*    z-index: -1;*/
+        /*    transition: all .3s ease-in-out;*/
+        /*}*/
 
-        .box::before {
-            left: 15px;
-            transform: skew(-5deg) rotate(-5deg);
-        }
+        /*.box::before {*/
+        /*    left: 15px;*/
+        /*    transform: skew(-5deg) rotate(-5deg);*/
+        /*}*/
 
-        .box::after {
-            right: 15px;
-            transform: skew(5deg) rotate(5deg);
-        }
+        /*.box::after {*/
+        /*    right: 15px;*/
+        /*    transform: skew(5deg) rotate(5deg);*/
+        /*}*/
 
-        .box:hover::before,
-        .box:hover::after {
-            box-shadow: 0 2px 14px rgba(0,0,0,.4);
-        }
+        /*.box:hover::before,*/
+        /*.box:hover::after {*/
+        /*    box-shadow: 0 2px 14px rgba(0,0,0,.4);*/
+        /*}*/
 
-        .box:hover::before {
-            left: 5px;
-        }
+        /*.box:hover::before {*/
+        /*    left: 5px;*/
+        /*}*/
 
-        .box:hover::after {
-            right: 5px;
-        }
+        /*.box:hover::after {*/
+        /*    right: 5px;*/
+        /*}*/
 
         button {
             background: tomato;
@@ -120,6 +120,7 @@
     <button id="snapshot">Snapshot</button>
     <button id="zoom">Zoom</button>
     <button id="fit">Fit</button>
+    Seed: 48283325547
 </div>
 <div id="paper" class="box">
     <div id="cover">

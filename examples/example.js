@@ -7,7 +7,7 @@ function setup() {
 
   // Sets the screen to be 720 pixels wide and 400 pixels high
   setBackground(255);
-  createCanvas(720, 400, HPGL);
+  createCanvas(720, 400, NoHPGL);
   noSmooth();
 
   translate(140, 0);

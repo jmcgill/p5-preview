@@ -8,7 +8,7 @@ function Capturer() {
     requestedHeight = height;
     requestedWidth = width;
     console.log('****** Calling wrapped create canvas', requestedHeight, requestedWidth);
-    oldCreateCanvas(width * parameters.scale, height * parameters.scale);
+    oldCreateCanvas(width * parameters.scale, height * parameters.scale, renderer);
   }
 
   const w = r.prototype._applyDefaults;
@@ -35,7 +35,7 @@ const yOffset = 30; // (height - (rows * spacing)) / 2;
 
 function setup() {
   Capturer();
-  createCanvas(width, height);
+  createCanvas(width, height, HPGL);
   rectMode(CENTER);
 
   for (let y = 0; y < rows; ++y) {

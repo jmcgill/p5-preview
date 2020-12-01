@@ -26,8 +26,9 @@ function Capturer() {
   createCanvas = function(width, height, renderer) {
     requestedHeight = height;
     requestedWidth = width;
-    console.log('****** Calling wrapped create canvas', requestedHeight, requestedWidth);
-    oldCreateCanvas(width * parameters.scale, height * parameters.scale, renderer);
+    // console.log('****** Calling wrapped create canvas', requestedHeight, requestedWidth);
+    //oldCreateCanvas(width * parameters.scale, height * parameters.scale, renderer);
+    oldCreateCanvas(width, height, renderer);
   }
 
   const w = r.prototype._applyDefaults;
@@ -35,6 +36,7 @@ function Capturer() {
     w.call(this._renderer);
     // scale(parameters.scale);
     // scale(10.0);
+    scale(1.0);
     background('white');
     randomSeed(parameters.seed);
     setupComplete();
@@ -54,22 +56,23 @@ var class_list = ['bird',
   'spider',
   'yoga'];
 
-var strokes=[[-4,0,1,0,0],[-15,9,1,0,0],[-10,17,1,0,0],[-1,28,1,0,0],[14,13,1,0,0],[12,4,1,0,0],[22,1,1,0,0],[14,-11,1,0,0],[5,-12,1,0,0],[2,-19,1,0,0],[-12,-23,1,0,0],[-13,-7,1,0,0],[-14,-1,0,1,0], [0, 0, 0, 1, 0]];
+var strokes=[[-4,0,1,0,0],[-15,9,1,0,0],[-10,17,1,0,0],[-1,28,1,0,0],[14,13,1,0,0],[12,4,1,0,0],[22,1,1,0,0],[14,-11,1,0,0],[5,-12,1,0,0],[2,-19,1,0,0],[-12,-23,1,0,0],[-13,-7,1,0,0],[-14,-1,0,1,0]];
 
 function randomStrokes() {
-  let count = Math.floor(random(10));
+  let count = Math.floor(random(3));
 
   const grid = 3;
   strokes = [];
 
   for (let i = 0; i < 1; ++i) {
     //square();
-    //line();
+    //myLine();
+    //myCircle();
     let type = Math.floor(random(2));
     if (type === 0) {
-      line();
+      myLine();
     } else {
-      circle();
+      myCircle();
     }
     // line();
   }
@@ -77,8 +80,8 @@ function randomStrokes() {
   // strokes.push([0, 0, 0, 1, 0]);
 }
 
-function line() {
-  let grid = 40;
+function myLine() {
+  let grid = 100;
 
   let x = Math.floor(random(2));
   let y = Math.floor(random(2));
@@ -108,20 +111,20 @@ function square() {
   strokes.push([0, -h, 0, 0, 0]);
 }
 
-function circle() {
+function myCircle() {
   const sides = Math.floor(random(15)) + 4;
 
-  const start = Math.floor(random(sides));
-  const arcs = Math.floor(random(sides - start));
+  // let arcs = Math.floor(random(sides - start));
+  arcs = Math.random(sides) + (sides / 2);
 
   const angle = (2 * Math.PI) / sides;
-  let ca = 0;
+  let ca = Math.random(2 * Math.PI);
   const radius = Math.floor(random(40)) + 5;
 
   // Move to a random location on the grid, this is our circle center;
-  let grid = 3;
-  let x = Math.floor(random(20)) * grid;
-  let y = Math.floor(random(20)) * grid;
+  let grid = 100;
+  let x = Math.floor(random(3)) * grid;
+  let y = Math.floor(random(3)) * grid;
 
   // strokes.push([x, y, 1, 0, 0]);
   for (let i = 0; i <= sides; ++i) {
@@ -130,21 +133,25 @@ function circle() {
     let dx = x1 - x;
     let dy = y1 - y;
 
-    if (i >= start && i < (start + arcs)) {
-      strokes.push([dx, dy, 1, 0, 0]);
-    } else {
-      strokes.push([dx, dy, 0, 1, 0]);
+    if (i < arcs) {
+    strokes.push([dx, dy, 1, 0, 0]);
     }
+    //else {
+    //   //strokes.push([dx, dy, 0, 1, 0]);
+    // }
     x = x1;
     y = y1;
+
     ca += angle;
   }
+  strokes[strokes.length - 1][2] = 1;
+  strokes[strokes.length - 1][3] = 1;
 }
 
 // sketch_rnn model
 var model;
 var model_data;
-var temperature = 0.25;
+var temperature = 0.1;
 var min_sequence_length = 5;
 
 var model_pdf; // store all the parameters of a mixture-density distribution
@@ -213,36 +220,18 @@ var clear_screen = function() {
 
 let counter = 0;
 
-let offsetX = -55;
-let offsetY = -20;
-let sscale = 1.0;
-let spacing = 35;
-var screen_scale_factor = 50.0;
+
+
+let sscale = 0.04;
+//let sscale = 0.2;
+let offsetX = 40 / sscale;
+let offsetY = 70 / sscale;
+let spacing = 1000;
+var screen_scale_factor = 2.0;
 let ww = 4;
 
 var restart = function() {
-  // reinitialize variables before calling p5.js setup.
-  line_color = color(random(64, 224), random(64, 224), random(64, 224));
-  predict_line_color = color(random(64, 224), random(64, 224), random(64, 224));
 
-  // draws original strokes
-  // clear_screen();
-  scale(sscale);
-  let x = counter % ww;
-  let y = Math.floor(counter / ww);
-  translate((spacing * x) + offsetX, (spacing * y) + offsetY);
-  counter += 1;
-
-  if (counter > 16) {
-    started = false;
-  }
-  [end_x, end_y] = draw_example(strokes, start_x, start_y, line_color);
-
-  // copies over the model
-  model_state = model.copy_state(model_state_orig);
-  model_x = end_x;
-  model_y = end_y;
-  model_prev_pen = [0, 1, 0];
 };
 
 var encode_strokes = function() {
@@ -303,7 +292,11 @@ function setup() {
   // temperature_slider.changed(temperature_slider_event);
 
   // make the canvas and clear the screens
-  createCanvas(screen_width, screen_height);
+  //createCanvas(screen_width, screen_height, NoHPGL);
+  createCanvas(500, 500, NoHPGL)
+  const hw = screen_width / 2;
+  const hh = screen_height / 2;
+  rect(hw, hh, screen_width,  screen_height);
   push();
   frameRate(60);
 
@@ -311,24 +304,83 @@ function setup() {
   textSize(3);
   fill(50, 50, 50);
   // stroke(color(100, 100, 100));
-  text("scribbles #1 / birds", 90, 210);
+  scale(sscale);
+  const title = 'scribbles #3 / flamingo';
+  const width = 2.85 * title.length;
+  text(title, ((215 - width) / 2) / sscale, 220 / sscale);
 
-  encode_strokes();
-  restart();
-  started = true;
+  var model_mode = "gen";
+  var call_back = function(new_model) {
+    console.log('Running model callback');
+    model = new_model;
+    model.set_pixel_factor(screen_scale_factor);
+    encode_strokes();
+    restart();
+    started = true;
+  }
+  ModelImporter.change_model(model, 'flamingo', model_mode, call_back);
+
+  //encode_strokes();
+  // restart();
+  //started = true;
 
   pop();
-  // var model_mode = "gen";
-  // var call_back = function(new_model) {
-  //   console.log('Running model callback');
-  //   model = new_model;
-  //   model.set_pixel_factor(screen_scale_factor);
-  //   encode_strokes();
-  //   restart();
-  //   started = true;
-  // }
-  // ModelImporter.change_model(model, 'ant', model_mode, call_back);
+
 };
+
+function getCenter(vertices) {
+  min_x = 99999;
+  min_y = 99999;
+  max_x = 0;
+  max_y = 0;
+
+  for (let i = 0; i < vertices.length; ++i) {
+    if (vertices[i][0] < min_x) {
+      min_x = vertices[i][0];
+    }
+    if (vertices[i][0] > max_x) {
+      max_x = vertices[i][0];
+    }
+
+    if (vertices[i][1] < min_y) {
+      min_y = vertices[i][1];
+    }
+
+    if (vertices[i][1] > max_y) {
+      max_y = vertices[i][1];
+    }
+  }
+
+ //  console.log(min_x, min_y, max_x, max_y);
+
+  return [(max_x - min_x) / 2, (max_y - min_y) / 2];
+}
+
+function getBounds(vertices) {
+  min_x = 99999;
+  min_y = 99999;
+  max_x = 0;
+  max_y = 0;
+
+  for (let i = 0; i < vertices.length; ++i) {
+    if (vertices[i][0] < min_x) {
+      min_x = vertices[i][0];
+    }
+    if (vertices[i][0] > max_x) {
+      max_x = vertices[i][0];
+    }
+
+    if (vertices[i][1] < min_y) {
+      min_y = vertices[i][1];
+    }
+
+    if (vertices[i][1] > max_y) {
+      max_y = vertices[i][1];
+    }
+  }
+
+  return [min_x, min_y, max_x, max_y];
+}
 
 // TODO(jimmy): Keep calling in a loop until we get the pen up command, then
 // find the center of the bounding box and shift each point so that the middle aligns with the grid.
@@ -342,42 +394,154 @@ function draw() {
   var model_dx, model_dy;
   var model_pen_down, model_pen_up, model_pen_end;
 
+
+  // console.log('Starting drawing a sketch');
+  // restart();
+
+  // Draw the initial seeding sketch, starting at 0, 0
+  line_color = color(random(64, 224), random(64, 224), random(64, 224));
+  predict_line_color = color(random(64, 224), random(64, 224), random(64, 224));
+
+  // draws original strokes
+  scale(sscale);
+  let x = counter % ww;
+  let y = Math.floor(counter / ww);
+  translate((spacing * x) + offsetX, (spacing * y) + offsetY);
+  counter += 1;
+
+  if (counter >= 16) {
+    started = false;
+  }
+
+  // [end_x, end_y] = draw_example(strokes, start_x, start_y, line_color);
+  var i;
+  model_x = 0;
+  model_y = 0;
+  var dx, dy;
+  var pen_down, pen_up, pen_end;
+
+  const instructions = [];
+  const vertices = [];
+
+  for(i = 0; i < strokes.length; i++) {
+    // sample the next pen's states from our probability distribution
+    [dx, dy, pen_down, pen_up, pen_end] = strokes[i];
+    instructions.push(strokes[i]);
+
+    // update the absolute coordinates from the offsets
+    model_x += dx;
+    model_y += dy;
+    vertices.push([model_x, model_y]);
+  }
+
+  //
+  // copies over the model
+  model_state = model.copy_state(model_state_orig);
+  model_prev_pen = [pen_down, pen_up, pen_end];
+
+  // HACK
+  // model_x = 0;
+  // model_y = 0
+
   model_pdf = model.get_pdf(model_state);
   [model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end] = model.sample(model_pdf, temperature);
 
-  if (model_pen_end === 1) {
-    restart();
-  } else {
+  instructions.push([model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end]);
+  vertices.push([model_x + model_dx, model_y + model_dy]);
 
-    // If our pen is currently down
-    if (model_prev_pen[0] === 1) {
-      scale(sscale);
-      let x = (counter - 1) % ww;
-      let y = Math.floor((counter - 1) / ww);
-      translate((spacing * x) + offsetX, (spacing * y) + offsetY);
-      // draw line connecting prev point to current point.
-      stroke(predict_line_color);
-      strokeWeight(0.3);
-      //line(model_x, model_y, model_x+model_dx, model_y+model_dy);
-      vertex(model_x + model_dx, model_y + model_dy);
-    } else {
-      if (model_pen_down) {
-        noFill();
-        beginShape();
-        vertex(model_x + model_dx, model_y + model_dy);
-      }
-    }
-
-    if (model_pen_up) {
-      endShape();
-    }
-
+  while (model_pen_end !== 1) {
     model_prev_pen = [model_pen_down, model_pen_up, model_pen_end];
     model_state = model.update([model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end], model_state);
 
     model_x += model_dx;
     model_y += model_dy;
+
+    model_pdf = model.get_pdf(model_state);
+    [model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end] = model.sample(model_pdf, temperature);
+
+    instructions.push([model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end]);
+    vertices.push([model_x + model_dx, model_y + model_dy]);
   }
+  // cole.log(`Ended model with ${instructions.length} instructions`);
+
+  // fill(0, 0, 0);
+  // circle(0, 0, 50)
+  // noFill();
+
+  const bounds = getBounds(vertices);
+  const center = getCenter(vertices);
+  // rect(bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1]);
+
+  // console.log('CENTER IS', center);
+
+  model_x = -bounds[0] - center[0];
+  model_y = -bounds[1] - center[1];
+  // model_x = old_x;
+  // model_y = old_y;
+
+  //model_x = old_x - center[0];
+  //model_y = old_y - center[1];
+  //model_x = 0; // 0 - center[0];
+  //model_y = 0; // - center[1];
+
+  p = instructions[0];
+  model_prev_pen = [0, 1, 0];
+
+  // let x = (counter - 1) % ww;
+  // let y = Math.floor((counter - 1) / ww);
+  // scale(sscale);
+  // translate((spacing * x) + offsetX, (spacing * y) + offsetY);
+
+  let weight = 0.5;
+
+  // console.log(instructions)
+
+  for (let i = 0; i < instructions.length; ++i) {
+    // console.log(i);
+    [model_dx, model_dy, model_pen_down, model_pen_up, model_pen_end] = instructions[i];
+    // console.log(`Executing instruction ${model_dx} ${model_dy} ${model_pen_up} ${model_pen_down}`);
+
+    // If our pen is currently down
+    if (model_prev_pen[0] === 1) {
+      // console.log('***** PEN DOWN');
+
+      // draw line connecting prev point to current point.
+      stroke(predict_line_color);
+      strokeWeight(weight);
+      // line(model_x, model_y, model_x+model_dx, model_y+model_dy);
+      vertex(model_x + model_dx, model_y + model_dy);
+      // console.log(model_x + model_dx, model_y + model_dy, model_dx, model_dy);
+
+      if (i < strokes.length) {
+        stroke(255, 0, 0);
+        strokeWeight(4);
+      } else {
+        stroke(predict_line_color);
+      }
+    } else {
+      // console.log('***** PEN UP')
+      if (model_pen_down) {
+        // console.log('*** STARTING NEW SHAPE', model_x + model_dx, model_y + model_dy);
+        noFill();
+        beginShape();
+        vertex(model_x + model_dx, model_y + model_dy);
+      }
+    }
+    model_x += model_dx;
+    model_y += model_dy;
+
+    if (model_pen_up) {
+      // console.log("**** END SHAPE");
+      endShape();
+      //return;
+      weight += 0.5;
+    }
+
+    model_prev_pen = [model_pen_down, model_pen_up, model_pen_end];
+    // started = false;
+  }
+
+  //endShape();
 
   pop();
 };

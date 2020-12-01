@@ -36,7 +36,7 @@ createCanvas = function(height, width, renderer) {
 
 function setup() {
   Capturer();
-  createCanvas(215, 279);
+  createCanvas(215, 279, HPGL);
 
   // line(50, 50, 100, 100);
   rect(30, 30, 10, 10);

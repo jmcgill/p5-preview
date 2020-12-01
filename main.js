@@ -26,10 +26,11 @@ function reload() {
   const filename = process.argv[2];
 
   const template = handlebars.compile('' + fs.readFileSync('templates/template.html'));
+  seed = Math.floor(Math.random() * 99999999999);
   fs.writeFileSync('temp.html', template({
     filename: filename,
-    scale,
-    seed,
+    scale: scale,
+    seedy: seed,
     rightCrop,
     bottomCrop,
     canvasLeft,

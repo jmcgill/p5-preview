@@ -12,7 +12,7 @@
     <script type="text/javascript">
         const parameters = {
             scale: {{ scale }},
-            seed: {{ seed }}
+            seed: {{ seedy }}
         }
     </script>
     <script type="text/javascript" src="renderer.js"></script>
@@ -36,7 +36,7 @@
             height: {{ scaledHeight }};
             width: {{ scaledWidth }};
             margin: 0 auto;
-            overflow: hidden;
+            overflow: scroll;
         }
 
         body {
@@ -45,47 +45,47 @@
             background: #efefef;
         }
 
-        .box {
-            position: relative;
-            width: {{ scaledWidth }};
-            height: {{ scaledHeight }};
-            margin: 20 auto;
-        }
+        /*.box {*/
+        /*    position: relative;*/
+        /*    width: {{ scaledWidth }};*/
+        /*    height: {{ scaledHeight }};*/
+        /*    margin: 20 auto;*/
+        /*}*/
 
-        .box::before,
-        .box::after {
-            content: '';
-            position: absolute;
-            bottom: 12px;
-            width: 40%;
-            height: 10px;
-            box-shadow: 0 5px 14px rgba(0,0,0,.7);
-            z-index: -1;
-            transition: all .3s ease-in-out;
-        }
+        /*.box::before,*/
+        /*.box::after {*/
+        /*    content: '';*/
+        /*    position: absolute;*/
+        /*    bottom: 12px;*/
+        /*    width: 40%;*/
+        /*    height: 10px;*/
+        /*    box-shadow: 0 5px 14px rgba(0,0,0,.7);*/
+        /*    z-index: -1;*/
+        /*    transition: all .3s ease-in-out;*/
+        /*}*/
 
-        .box::before {
-            left: 15px;
-            transform: skew(-5deg) rotate(-5deg);
-        }
+        /*.box::before {*/
+        /*    left: 15px;*/
+        /*    transform: skew(-5deg) rotate(-5deg);*/
+        /*}*/
 
-        .box::after {
-            right: 15px;
-            transform: skew(5deg) rotate(5deg);
-        }
+        /*.box::after {*/
+        /*    right: 15px;*/
+        /*    transform: skew(5deg) rotate(5deg);*/
+        /*}*/
 
-        .box:hover::before,
-        .box:hover::after {
-            box-shadow: 0 2px 14px rgba(0,0,0,.4);
-        }
+        /*.box:hover::before,*/
+        /*.box:hover::after {*/
+        /*    box-shadow: 0 2px 14px rgba(0,0,0,.4);*/
+        /*}*/
 
-        .box:hover::before {
-            left: 5px;
-        }
+        /*.box:hover::before {*/
+        /*    left: 5px;*/
+        /*}*/
 
-        .box:hover::after {
-            right: 5px;
-        }
+        /*.box:hover::after {*/
+        /*    right: 5px;*/
+        /*}*/
 
         button {
             background: tomato;
@@ -120,6 +120,7 @@
     <button id="snapshot">Snapshot</button>
     <button id="zoom">Zoom</button>
     <button id="fit">Fit</button>
+    Seed: {{ seedy }}
 </div>
 <div id="paper" class="box">
     <div id="cover">
