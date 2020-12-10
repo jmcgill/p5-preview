@@ -78,6 +78,8 @@ module.exports = function(p5) {
 
                     // this.selectPen(4);
 
+                    this.setVelocity(0.1);
+
                     setInterval(function () {
                         // console.log('Running operations heartbeat');
                         if (that.operations.length === 0) {
@@ -86,7 +88,7 @@ module.exports = function(p5) {
 
                         const op = that.operations.shift();
                         op();
-                    }, 10000);
+                    }, 200);
                 });
             }, 1000);
         } else {
@@ -99,7 +101,7 @@ module.exports = function(p5) {
 
                 const op = that.operations.shift();
                 op();
-            }, 1000);
+            }, 0);
         }
 
         // setInterval(function () {
@@ -302,9 +304,8 @@ module.exports = function(p5) {
 
 
 
-    RendererHPGL.prototype.rect = function(x1, y1, w, h) {
-        console.log('RECT SYNC', x1, y1, w, h, this._doStroke);
-        this.operations.push(RendererHPGL.prototype.rectAsync.bind(this, this._rectMode, this._doStroke, x1, y1, w, h));
+    RendererHPGL.prototype.rect = function(args) {
+        this.operations.push(RendererHPGL.prototype.rectAsync.bind(this, this._rectMode, this._doStroke, args));
     };
 
     // TODO(jimmy): Handle Rect Mode, optional hight and radiused corners
@@ -314,7 +315,7 @@ module.exports = function(p5) {
         const w = args[2];
         const h = args[3];
 
-        console.log('Rect Async ', x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
+        console.log('Rect Async ', mode, doStroke, opt_noplot, opt_color, x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
         const offset = [0, 0];
         const hw = w / 2;
         const hh = h / 2;
@@ -334,12 +335,12 @@ module.exports = function(p5) {
         // }
 
 
-        if (this.r_ !== 255 || this.g_ !== 255 || this.b_ !== 255) {
+        //if (this.r_ !== 255 || this.g_ !== 255 || this.b_ !== 255) {
             this.lineAsync(p1[0], p1[1] ,p2[0], p2[1], opt_noplot, opt_color);
             this.lineAsync(p2[0], p2[1] ,p3[0], p3[1], opt_noplot, opt_color);
             this.lineAsync(p3[0], p3[1] ,p4[0], p4[1], opt_noplot, opt_color);
             this.lineAsync(p4[0], p4[1] ,p1[0], p1[1], opt_noplot, opt_color);
-        }
+        //}
 
         if (this.fill_r_ !== 255 || this.fill_g_ !== 255 || this.fill_b_ !== 255) {
             // Transform to plotter coordinates
@@ -392,14 +393,16 @@ module.exports = function(p5) {
 
         const height = this.font_height * this.font_size * this.scale_;
         const width = this.font_width * this.font_size * this.scale_ * msg.length;
+        console.log('HEIGHT WIDTH = ', height, width);
 
         // We adjust by the un-scaled width since this point will be transformed.
-        const adjX = x - ((this.font_width * this.font_size * msg.length) / 2);
+        // TODO(jimmy): Suppport center and left align
+        //let adjX = x - ((this.font_width * this.font_size * msg.length) / 2);
+        //let adjX = x;
+        let adjX = x - ((this.font_width * this.font_size * msg.length));
 
         // Apply the current transforms
         const p1 = this.current_transform.transformPair(adjX, y);
-        console.log('****TXT******', x, y, p1[0], p1[1]);
-        console.log(transformToString(this.current_transform));
         const base = this.getPlotterTransform();
         const pp1 = base.transformPair(adjX, y);
 
@@ -417,8 +420,10 @@ module.exports = function(p5) {
 
         // Draw text extents. We do this in our transformed coordinates so that
         // rotation affects text extents correctly.
-        this.rectAsync('corner', [adjX, y, this.font_width * this.font_size * msg.length, this.font_height * this.font_size], true, [5, 131, 244]);
-        // p5.Renderer2D.prototype.text.call(this, msg, p1[0], p1[1]);
+        // y += (this.font_height * this.font_size);
+        this.rectAsync('corner', true, [adjX, y, this.font_width * this.font_size * msg.length, this.font_height * this.font_size], true, [5, 131, 244]);
+        // this.rectAsync('corner', true, [50, 50, 50, 50]);
+        //p5.Renderer2D.prototype.text.call(this, msg, p1[0], p1[1]);
     };
 
     RendererHPGL.prototype.translate = function(x, y) {

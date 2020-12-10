@@ -172,8 +172,8 @@ let scales = 3.7;
 const rows = 15;
 const cols = 11;
 
-const height = 279;
-const width = 215;
+const height = 215 * 2;
+const width = 279;
 
 const size = 15;
 const spacing = size;
@@ -208,7 +208,8 @@ function setup() {
     // Capturer();
 
     createCanvas(width, height, NoHPGL);
-    const data = fs.readFileSync('/Users/jmcgill/src/p5-preview/examples/fill.svg');
+    //const data = fs.readFileSync('/Users/jimmy/src/p5-preview/examples/fill.svg');
+    const data = fs.readFileSync('/Users/jimmy/Desktop/bonded_filled.svg');
 
     setupComplete();
 
@@ -220,7 +221,7 @@ function setup() {
     const parser = new DOMParser();
     const svg = parser.parseFromString(data, "text/xml");
     const paths = svg.getElementsByTagName("path");
-    const polygons = svg.getElementsByTagName("polygon");
+
 
     let ox = 200;
     let oy = 200;
@@ -230,7 +231,7 @@ function setup() {
 
     scale(0.25);
 
-
+    const polygons = svg.getElementsByTagName("polygon");
     for (let polygon of polygons) {
         const code = polygon.getAttribute('points');
         const cp = code.split(/(?=[ ])/);
@@ -242,6 +243,7 @@ function setup() {
         lines = [];
         let minx = 999999;
         let miny = 999999;
+        let maxy = 0;
 
         beginShape(POINTS);
         for (var i = 0; i < components.length - 2; i += 2) {
@@ -259,6 +261,10 @@ function setup() {
                 miny = components[i + 1] + oy;
             }
 
+            if (components[i + 1] > maxy) {
+                maxy = components[i + 1] + oy;
+            }
+
             vertex(components[i] + ox, components[i + 1] + oy);
         }
         lines.push({
@@ -271,102 +277,33 @@ function setup() {
         vertex(components[0] + ox, components[1] + oy);
         // endShape();
 
-        for (var idx = 0; idx < lines.length; ++idx) {
-            line(lines[idx].x1, lines[idx].y1, lines[idx].x2, lines[idx].y2);
-        }
-
-        // Let's do a fill
-        // for (let i = 0; i < 25; ++i) {
-        //     let y = (i * 10);
-        //     drawIntersectingLine(lines, minx, miny + y, minx + 200, miny + y);
+        // Uncomment to draw outline
+        // for (var idx = 0; idx < lines.length; ++idx) {
+        //     line(lines[idx].x1, lines[idx].y1, lines[idx].x2, lines[idx].y2);
         // }
 
         let cx = minx - 50;
-        let cy = miny;
+        let cy = maxy;
+        let height = Math.abs(miny - maxy);
         let mode = false;
-        let angle = Math.PI / 2 + (Math.PI / 4);
+        let angle = Math.PI;
 
         for (let i = 0; i < 60; ++i) {
-            let nx = cx + (100 * Math.sin(angle));
-            let ny = cy + (100 * Math.cos(angle));
+            let nx = cx + (height * Math.sin(angle));
+            let ny = cy + (height * Math.cos(angle));
 
             const o = drawIntersectingLine(lines, cx, cy, nx, ny, false);
-            cx = o.x;
-            cy = o.y;
-            if (mode) {
-                angle = Math.PI / 2  + (Math.PI / 4);;
-            } else {
-                angle = -(Math.PI / 8);
-            }
-            mode = !mode;
+            //line(cx, cy, nx, ny);
+            cx += 5;
+            // cx = o.x;
+            // cy = o.y;
+            // if (mode) {
+            //     angle = Math.PI / 2  + (Math.PI);
+            // } else {
+            //     angle = -(Math.PI);
+            // }
+            // mode = !mode;
         }
-    }
-
-    for (let path of paths) {
-        const code = path.getAttribute('d');
-        const components = code.split(/(?=[A-Za-z])/);
-        console.log(components);
-
-        beginShape(POINTS);
-        for (let component of components) {
-            if (component[0] === 'M') {
-                const p = component.substr(1).split(',');
-                x = parseFloat(p[0], 10) - ox;
-                y = parseFloat(p[1], 10) - oy;
-                console.log('Moving to ', x, y);
-            } else if (component[0] === 'l') {
-                let m = component.substr(1).replace(/-/g, ',-');
-                if (m[0] === ',') {
-                    m = m.slice(1);
-                }
-                const p = m.split(',');
-                const x1 = parseFloat(p[0], 10);
-                const y1 = parseFloat(p[1], 10);
-                //line(x, y, x + x1, y + y1);
-                vertex(x, y);
-                vertex(x + x1, y + y1);
-                console.log('Line from ', x, y, ' to ', x1, y1);
-                x = x + x1;
-                y = y + y1;
-            } else if (component[0] === 'c') {
-                let m = component.substr(1).replace(/-/g, ',-');
-                if (m[0] === ',') {
-                    m = m.slice(1);
-                }
-                const p = m.split(',');
-                const c1x = parseFloat(p[0], 10) + x;
-                const c1y = parseFloat(p[1], 10) + y;
-                const c2x = parseFloat(p[2], 10) + x;
-                const c2y = parseFloat(p[3], 10) + y;
-                const x2 = parseFloat(p[4], 10) + x;
-                const y2 = parseFloat(p[5], 10) + y;
-                console.log('Curve: ', x, y, x2, y2, c1x, c1y, c2x, c2y);
-                const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
-                for (let i = 0; i < steps.length; ++i) {
-                    vertex(steps[i].x, steps[i].y);
-                    // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
-                }
-                x = x2;
-                y = y2;
-            } else if (component[0] === 'C') {
-                let p = component.substr(1).replace(/-/g, ',-').split(',');
-                const c1x = parseFloat(p[0], 10) - ox;
-                const c1y = parseFloat(p[1], 10) - oy;
-                const c2x = parseFloat(p[2], 10) - ox;
-                const c2y = parseFloat(p[3], 10) - oy;
-                const x2 = parseFloat(p[4], 10) - ox;
-                const y2 = parseFloat(p[5], 10) - oy;
-                console.log('Curve: ', x, y, x2, y2, c1x, c1y, c2x, c2y);
-                const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
-                for (let i = 0; i < steps.length; ++i) {
-                    vertex(steps[i].x, steps[i].y);
-                    // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
-                }
-                x = x2;
-                y = y2;
-            }
-        }
-        endShape();
     }
 }
 
