@@ -3,11 +3,6 @@ const affine  = require('geom2d').affine;
 const SerialPort = require("serialport");
 const fs = require('fs');
 
-// let height = 430;
-// let width = 279;
-
-
-
 module.exports = function(p5) {
     /**
      * @namespace RendererHPGL
@@ -21,10 +16,11 @@ module.exports = function(p5) {
         return `${transform.m00}.${transform.m01}.${transform.m10}.${transform.m11}-${transform.v0},${transform.v1}`
     }
 
+    function dlog(msg) {
+        // console.log(msg, arguments.slice(1));
+    }
+
     function RendererHPGL(elt, w, h, pInst, isMainCanvas, plotForReal) {
-        console.log('**** CREATING HPGL INSTANCE');
-        // TODO(jimmy): Configurable log
-        console.log('Initializing HPGL renderer');
         this.plotForReal = plotForReal;
 
         this.width = w;
@@ -45,14 +41,10 @@ module.exports = function(p5) {
 
         // Printer is always rotated 90 degrees
         this.current_transform = new affine.translation(0, 0);
-        console.log('*** ORIGINAL TRANSFORM: ', this.current_transform);
 
         // TODO(jimmy): Work out something about size? Or just say everything is in mm relative to 0, 0
         // TODO(jimmy): Will commands be enqueued before this is initialized?
         const that = this;
-
-        console.log('Registering plotter transport');
-
         if (plotForReal) {
             window.setTimeout(function() {
                 that.plotter = new hpgl.Plotter();
@@ -126,7 +118,6 @@ module.exports = function(p5) {
     RendererHPGL.prototype = Object.create(p5.Renderer2D.prototype);
 
     RendererHPGL.prototype._applyDefaults = function() {
-        console.log('*** APPLYING DEFAULTS');
         p5.Renderer2D.prototype._applyDefaults.call(this);
         this.drawingContext.lineWidth = 1.5;
 
@@ -188,8 +179,8 @@ module.exports = function(p5) {
 
         p5.Renderer2D.prototype.line.call(this, p1[0], p1[1] ,p2[0], p2[1]);
         p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
-        console.log('Line Async', this.r_, this.g_, this.b_, p1[0], p1[1], p2[0], p2[1]);
-        console.log(`Drawing a line from ${x1},${y1} to ${x2},${y2}`);
+        dlog('Line Async', this.r_, this.g_, this.b_, p1[0], p1[1], p2[0], p2[1]);
+        dlog(`Drawing a line from ${x1},${y1} to ${x2},${y2}`);
 
         // Plotter operates with an additional 90 degree rotation
         //const base = this.current_transform.copy();
@@ -202,20 +193,23 @@ module.exports = function(p5) {
         const pp1 = base.transformPair(x1, y1);
         const pp2 = base.transformPair(x2, y2);
 
-        console.log(`Drawing line ${pp1[0]},${pp1[1]} to ${pp2[0]}, ${pp2[1]}`);
+        dlog(`Drawing line ${pp1[0]},${pp1[1]} to ${pp2[0]}, ${pp2[1]}`);
 
         if (this.plotter && !opt_noplot) {
             // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
-            console.log(`Plotter move to ${pp1[0] / 10}, ${pp1[1] / 10}`)
+            dlog(`Plotter move to ${pp1[0] / 10}, ${pp1[1] / 10}`)
             this.plotter.drawLine(pp2[0] / 10, pp2[1] / 10, {
                 // linePattern: 2,
             });
         }
 
-        p5.Renderer2D.prototype.stroke.call(this, 255, 0, 255);
-        p5.Renderer2D.prototype.line.call(this, pp1[0], pp1[1] ,pp2[0], pp2[1]);
-        p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
+        // Render rotated
+        if (this.debugRotation) {
+            p5.Renderer2D.prototype.stroke.call(this, 255, 0, 255);
+            p5.Renderer2D.prototype.line.call(this, pp1[0], pp1[1] ,pp2[0], pp2[1]);
+            p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
+        }
         // p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0);
         return this;
     };
@@ -235,7 +229,6 @@ module.exports = function(p5) {
     }
 
     RendererHPGL.prototype.stroke = function(r, g, b) {
-        console.log('*****$$$$$ STROKE CALLED', r, g, b);
         // If we only get a single argument, it's a color
         if (r.levels) {
             const c = r;
@@ -260,12 +253,10 @@ module.exports = function(p5) {
         // } else {
         //     this.debug = false;
         // }
-        console.log('STROKE ASYNC', r, g, b);
         p5.Renderer2D.prototype.stroke.call(this, r, g, b, 255);
     }
 
     RendererHPGL.prototype.fill = function(r, g, b) {
-        console.log('*****$$$$$ FILE CALLED', r, g, b);
         // If we only get a single argument, it's a color
         if (r.levels) {
             const c = r;
@@ -302,8 +293,6 @@ module.exports = function(p5) {
         // console.log('Stroke - do nothing');
     };
 
-
-
     RendererHPGL.prototype.rect = function(args) {
         this.operations.push(RendererHPGL.prototype.rectAsync.bind(this, this._rectMode, this._doStroke, args));
     };
@@ -315,7 +304,7 @@ module.exports = function(p5) {
         const w = args[2];
         const h = args[3];
 
-        console.log('Rect Async ', mode, doStroke, opt_noplot, opt_color, x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
+        dlog('Rect Async ', mode, doStroke, opt_noplot, opt_color, x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
         const offset = [0, 0];
         const hw = w / 2;
         const hh = h / 2;
@@ -356,9 +345,11 @@ module.exports = function(p5) {
             const base = this.getPlotterTransform();
             const pp1 = base.transformPair(x1, y1);
 
-            p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0, 0);
-            p5.Renderer2D.prototype.rect.call(this, [pp1[0], pp1[1], sh, sw]);
-            p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_, 255);
+            if (this.debugRotation) {
+                p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0, 0);
+                p5.Renderer2D.prototype.rect.call(this, [pp1[0], pp1[1], sh, sw]);
+                p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_, 255);
+            }
 
             if (this.plotter && !opt_noplot) {
                 // this.plotter.selectPen(this.colorToPen(this.fill_r_, this.fill_g_, this.fill_b_))
@@ -388,12 +379,8 @@ module.exports = function(p5) {
     // x, y represent the center of the text
     // TODO(jimmy): Handle alternate textAlign modes
     RendererHPGL.prototype.textAsync = function(msg, x, y) {
-        console.log('FONT SIZE = ', this.font_size);
-        console.log(msg, x, y);
-
         const height = this.font_height * this.font_size * this.scale_;
         const width = this.font_width * this.font_size * this.scale_ * msg.length;
-        console.log('HEIGHT WIDTH = ', height, width);
 
         // We adjust by the un-scaled width since this point will be transformed.
         // TODO(jimmy): Suppport center and left align
@@ -406,7 +393,7 @@ module.exports = function(p5) {
         const base = this.getPlotterTransform();
         const pp1 = base.transformPair(adjX, y);
 
-        console.log('Drawing text at ', msg, x, adjX, y, p1[0], p1[1], width, height);
+        dlog('Drawing text at ', msg, x, adjX, y, p1[0], p1[1], width, height);
 
         if (this.plotter) {
             // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
@@ -418,33 +405,21 @@ module.exports = function(p5) {
             this.rectAsync('corner', [adjX, y, this.font_width * this.font_size * msg.length, this.font_height * this.font_size]);
         }
 
-        // Draw text extents. We do this in our transformed coordinates so that
-        // rotation affects text extents correctly.
+        // Draw text extents. We do this in our transformed coordinates so that rotation affects text extents correctly.
         // y += (this.font_height * this.font_size);
         this.rectAsync('corner', true, [adjX, y, this.font_width * this.font_size * msg.length, this.font_height * this.font_size], true, [5, 131, 244]);
-        // this.rectAsync('corner', true, [50, 50, 50, 50]);
-        //p5.Renderer2D.prototype.text.call(this, msg, p1[0], p1[1]);
     };
 
     RendererHPGL.prototype.translate = function(x, y) {
-        // console.log('Translate');
-        // const translate = new affine.translation(x, y);
-        // this.current_transform.rightComposeWith(translate);
-
         this.operations.push(RendererHPGL.prototype.translateAsync.bind(this, x, y));
     };
 
     RendererHPGL.prototype.translateAsync = function(x, y) {
-        console.log('Translate Async', x, y);
         const translate = new affine.translation(x, y);
         this.current_transform.rightComposeWith(translate);
-        console.log(transformToString(this.current_transform));
     };
 
     RendererHPGL.prototype.scale = function(f) {
-        // console.log('Scale');
-        // const scale = new affine.scaling(f, f);
-        // this.current_transform.rightComposeWith(scale);
         this.operations.push(RendererHPGL.prototype.scaleAsync.bind(this, f));
     };
 
@@ -469,13 +444,10 @@ module.exports = function(p5) {
     // };
 
     RendererHPGL.prototype.endShape = function(mode, vertices) {
-        console.log('End Shape Sync');
         this.operations.push(RendererHPGL.prototype.endShapeAsync.bind(this, mode, vertices));
     };
 
     RendererHPGL.prototype.endShapeAsync = function(mode, vertices) {
-        console.log('End Shape Async: ', mode, vertices.length);
-
         // We only handle standard mode
         // const r = Math.floor(Math.random() * 255);
         // const g = Math.floor(Math.random() * 255);
@@ -486,15 +458,11 @@ module.exports = function(p5) {
             // Apply the current transforms
             const p1 = this.current_transform.transformPair(vertices[i-1][0], vertices[i-1][1]);
             const p2 = this.current_transform.transformPair(vertices[i][0], vertices[i][1]);
-            // console.log(p1[0], p1[1]);
-
             p5.Renderer2D.prototype.line.call(this, p1[0], p1[1], p2[0], p2[1]);
 
         }
-        //p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0);
 
         const lines = [];
-
         const base = this.getPlotterTransform();
 
         for (let i = 1; i < vertices.length; ++i) {
@@ -505,45 +473,25 @@ module.exports = function(p5) {
             lines.push(p1[0] / 10);
             lines.push(p1[1] / 10);
 
-            console.log(vertices[i-1][0], vertices[i-1][1], p0[0], p0[1]);
-
-            // p5.Renderer2D.prototype.stroke.call(this, 255, 0, 0);
-            // p5.Renderer2D.prototype.line.call(this, p0[0], p0[1], p1[0], p1[1]);
-            // p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0);
+            dlog(vertices[i-1][0], vertices[i-1][1], p0[0], p0[1]);
         }
 
         const p = base.transformPair(vertices[0][0], vertices[0][1]);
-        // console.log('CHECKING PLOTTER: ', this.plotter);
-
         if (this.plotter) {
-            // console.log('*** DRAWING SHAPEY THING: ', lines);
             this.plotter.moveTo(p[0] / 10, p[1] / 10);
             this.plotter.drawLines(lines);
         }
 
-        // Plotter operates with an additional 90 degree rotation
-        // const base = new affine.translation(215 / 2, 279 / 2);
-        // base.rightComposeWith(new affine.rotation(Math.PI / 2));
-        // base.rightComposeWith(new affine.translation(-140, -170));
-        // base.rightComposeWith(this.current_transform);
-        // const pp1 = base.transformPair(x1, y1);
-        // const pp2 = base.transformPair(x2, y2);
-        //
-        // if (this.plotter) {
-        //     this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
-        //     this.plotter.drawLine(pp2[0] / 10, pp2[1] / 10);
-        // }
         this.vertices = [];
     };
 
 
 
     RendererHPGL.prototype.scaleAsync = function(f) {
-        console.log('Scale Async', f);
         const scale = new affine.scaling(f, f);
         this.current_transform.rightComposeWith(scale);
 
-        console.log(transformToString(this.current_transform));
+        dlog(transformToString(this.current_transform));
 
         // We store scale separately since it is a scalar transform.
         // TODO(jimmy): Push and pop as needed
@@ -551,12 +499,10 @@ module.exports = function(p5) {
     };
 
     RendererHPGL.prototype.rotate = function(rads) {
-        // console.log('Rotate');
         this.operations.push(RendererHPGL.prototype.rotateAsync.bind(this, rads));
     };
 
     RendererHPGL.prototype.rotateAsync = function(rads) {
-        console.log('Rotate Async');
         const rotate = new affine.rotation(rads);
         this.current_transform.rightComposeWith(rotate);
         this.rotation_ = rads;
@@ -564,12 +510,10 @@ module.exports = function(p5) {
 
     // Only circles today - height ignored
     RendererHPGL.prototype.ellipse = function(args) {
-        console.log('%%%%%%%% ELLIPSE', args[0], args[1], args[2]);
         this.operations.push(RendererHPGL.prototype.circleAsync.bind(this, args[0], args[1], args[2]));
     };
 
     RendererHPGL.prototype.circleAsync = function(x, y, diameter) {
-        console.log('*** CIRCLE ASYNC', x, y);
         const lines = [];
         const segments = 100; //360 * 10;
         const arc = (360 / segments);
@@ -580,167 +524,26 @@ module.exports = function(p5) {
             let xx = (Math.cos(r) * (diameter / 2)) + (x + (diameter/2));
             let yy = (Math.sin(r) * (diameter / 2)) + (y + (diameter/2));
             lines.push([xx, yy]);
-            // lines.push(y);
         }
 
         this.endShapeAsync(null, lines);
-
-
-        // for (let i = 1; i < pixelLines.length; ++i) {
-        //     const p0 = this.current_transform.transformPair(pixelLines[i-1][0], pixelLines[i-1][1]);
-        //     const p1 = this.current_transform.transformPair(pixelLines[i][0], pixelLines[i][1]);
-        //     console.log('Drawing line');
-        //     p5.Renderer2D.prototype.line.call(this, p0[0], p0[1], p1[0], p1[1]);
-        // }
-
-        // console.log('Circle Async', x, y, diameter);
-        // const base = new affine.translation(215 / 2, 279 / 2);
-        // base.rightComposeWith(new affine.rotation(Math.PI / 2));
-        // base.rightComposeWith(new affine.translation(-140, -170));
-        // base.rightComposeWith(this.current_transform);
-        //
-        // const p0 = base.transformPair(x, y);
-        //
-        // if (this.plotter) {
-        //     this.plotter.moveTo(p0[0] / 10.0, p0[1] / 10.0);
-        //
-        //
-        //
-        //     //this.plotter.drawCircle((diameter / 2.0) / 10.0, 1);
-        // }
     };
 
     RendererHPGL.prototype.push = function(x, y) {
-        // console.log('Scheduling push');
         this.operations.push(RendererHPGL.prototype.pushAsync.bind(this, x, y));
     };
 
     RendererHPGL.prototype.pushAsync = function(x, y) {
-        console.log(`Pushing current transform`);
         this.transforms.push(this.current_transform.copy());
-        console.log(`${this.transforms.length} transforms on the stack after push`);
     };
 
     RendererHPGL.prototype.pop = function(x, y) {
-        // console.log('Scheduling pop');
         this.operations.push(RendererHPGL.prototype.popAsync.bind(this, x, y));
     };
 
     RendererHPGL.prototype.popAsync = function(x, y) {
-        console.log(`Popping current transform`);
-        console.log(`${this.transforms.length} transforms on the stack before pop`);
         this.current_transform = this.transforms.pop();
     };
-
-    // RendererSVG.prototype.resize = function(w, h) {
-    //
-    //     // console.log({w: w, h: h, tw: this.width, th: this.height});
-    //
-    //     if (!w || !h) {
-    //         // ignore invalid values for width and height
-    //         return;
-    //     }
-    //     if (this.width !== w || this.height !== h) {
-    //         // canvas will be cleared if its size changed
-    //         // so, we do same thing for SVG
-    //         // note that at first this.width and this.height is undefined
-    //         this.drawingContext.__clearCanvas();
-    //     }
-    //     this._withPixelDensity(function() {
-    //         p5.Renderer2D.prototype.resize.call(this, w, h);
-    //     });
-    //     // For scale, crop
-    //     // see also: http://sarasoueidan.com/blog/svg-coordinate-systems/
-    //     this.svg.setAttribute('viewBox', [0, 0, w, h].join(' '));
-    // };
-    //
-    // /**
-    //  * @private
-    //  */
-    // RendererSVG.prototype._withPixelDensity = function(fn) {
-    //     var pixelDensity = this._pInst._pixelDensity;
-    //     this._pInst._pixelDensity = 1; // 1 is OK for SVG
-    //     fn.apply(this);
-    //     this._pInst._pixelDensity = pixelDensity;
-    // };
-    //
-    // RendererSVG.prototype.background = function() {
-    //     var args = arguments;
-    //     this._withPixelDensity(function() {
-    //         p5.Renderer2D.prototype.background.apply(this, args);
-    //     });
-    // };
-    //
-    // RendererSVG.prototype.resetMatrix = function() {
-    //     this._withPixelDensity(function() {
-    //         p5.Renderer2D.prototype.resetMatrix.apply(this);
-    //     });
-    // };
-    //
-    // /**
-    //  * set gc flag for svgcanvas
-    //  *
-    //  * @private
-    //  */
-    // RendererSVG.prototype._setGCFlag = function(element) {
-    //     var that = this.drawingContext;
-    //     var currentGeneration = that.generations[that.generations.length - 1];
-    //     currentGeneration.push(element);
-    // };
-    //
-    // /**
-    //  * Append a element to current SVG Graphics
-    //  *
-    //  * @function appendChild
-    //  * @memberof RendererSVG.prototype
-    //  * @param {SVGElement|Element} element
-    //  */
-    // RendererSVG.prototype.appendChild = function(element) {
-    //     if (element && element.elt) {
-    //         element = element.elt;
-    //     }
-    //     this._setGCFlag(element);
-    //     var g = this.drawingContext.__closestGroupOrSvg();
-    //     g.appendChild(element);
-    // };
-    //
-    // /**
-    //  * Draw an image or SVG to current SVG Graphics
-    //  *
-    //  * FIXME: sx, sy, sWidth, sHeight
-    //  *
-    //  * @function image
-    //  * @memberof RendererSVG.prototype
-    //  * @param {p5.Graphics|SVGGraphics|SVGElement|Element} image
-    //  * @param {Number} x
-    //  * @param {Number} y
-    //  * @param {Number} width
-    //  * @param {Number} height
-    //  */
-    // RendererSVG.prototype.image = function(img, sx, sy, sWidth, sHeight, x, y, w, h) {
-    //     if (!img) {
-    //         throw new Error('Invalid image: ' + img);
-    //     }
-    //     var elt = img._renderer && img._renderer.svg; // handle SVG Graphics
-    //     elt = elt || (img.elt && img.elt.nodeName && (img.elt.nodeName.toLowerCase() === 'svg') && img.elt); // SVGElement
-    //     elt = elt || (img.nodeName && (img.nodeName.toLowerCase() == 'svg') && img); // <svg>
-    //     if (elt) {
-    //         // it's <svg> element, let's handle it
-    //         elt = elt.cloneNode(true);
-    //         elt.setAttribute('width', w);
-    //         elt.setAttribute('height', h);
-    //         elt.setAttribute('x', x);
-    //         elt.setAttribute('y', y);
-    //         if (sx || sy || sWidth || sHeight) {
-    //             sWidth /= this._pInst._pixelDensity;
-    //             sHeight /= this._pInst._pixelDensity;
-    //             elt.setAttribute('viewBox', [sx, sy, sWidth, sHeight].join(', '));
-    //         }
-    //         this.appendChild(elt);
-    //     } else {
-    //         p5.Renderer2D.prototype.image.apply(this, arguments);
-    //     }
-    // };
 
     p5.RendererHPGL = RendererHPGL;
 };
