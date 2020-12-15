@@ -3,6 +3,8 @@ const affine  = require('geom2d').affine;
 const SerialPort = require("serialport");
 const fs = require('fs');
 
+const SELECT_PEN = false;
+
 module.exports = function(p5) {
     /**
      * @namespace RendererHPGL
@@ -67,10 +69,11 @@ module.exports = function(p5) {
                         return;
                     }
                     console.log('Connected to plotter');
+                    if (SELECT_PEN) {
+                        this.selectPen(1);
+                    }
 
-                    // this.selectPen(4);
-
-                    this.setVelocity(0.1);
+                    // this.setVelocity(0.1);
 
                     setInterval(function () {
                         // console.log('Running operations heartbeat');
@@ -196,7 +199,9 @@ module.exports = function(p5) {
         dlog(`Drawing line ${pp1[0]},${pp1[1]} to ${pp2[0]}, ${pp2[1]}`);
 
         if (this.plotter && !opt_noplot) {
-            // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
+            if (SELECT_PEN) {
+                this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
+            }
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
             dlog(`Plotter move to ${pp1[0] / 10}, ${pp1[1] / 10}`)
             this.plotter.drawLine(pp2[0] / 10, pp2[1] / 10, {
@@ -324,12 +329,12 @@ module.exports = function(p5) {
         // }
 
 
-        //if (this.r_ !== 255 || this.g_ !== 255 || this.b_ !== 255) {
+        if (this.r_ !== 255 || this.g_ !== 255 || this.b_ !== 255) {
             this.lineAsync(p1[0], p1[1] ,p2[0], p2[1], opt_noplot, opt_color);
             this.lineAsync(p2[0], p2[1] ,p3[0], p3[1], opt_noplot, opt_color);
             this.lineAsync(p3[0], p3[1] ,p4[0], p4[1], opt_noplot, opt_color);
             this.lineAsync(p4[0], p4[1] ,p1[0], p1[1], opt_noplot, opt_color);
-        //}
+        }
 
         if (this.fill_r_ !== 255 || this.fill_g_ !== 255 || this.fill_b_ !== 255) {
             // Transform to plotter coordinates
@@ -352,7 +357,9 @@ module.exports = function(p5) {
             }
 
             if (this.plotter && !opt_noplot) {
-                // this.plotter.selectPen(this.colorToPen(this.fill_r_, this.fill_g_, this.fill_b_))
+                if (SELECT_PEN) {
+                    this.plotter.selectPen(this.colorToPen(this.fill_r_, this.fill_g_, this.fill_b_))
+                }
                 this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
                 this.plotter.drawRectangle(sh / 10, sw / 10,{
                     fillType: 'crosshatch'
@@ -384,9 +391,10 @@ module.exports = function(p5) {
 
         // We adjust by the un-scaled width since this point will be transformed.
         // TODO(jimmy): Suppport center and left align
-        //let adjX = x - ((this.font_width * this.font_size * msg.length) / 2);
+        let adjX = x - ((this.font_width * this.font_size * msg.length) / 2);
         //let adjX = x;
-        let adjX = x - ((this.font_width * this.font_size * msg.length));
+
+        // let adjX = x - ((this.font_width * this.font_size * msg.length));
 
         // Apply the current transforms
         const p1 = this.current_transform.transformPair(adjX, y);
@@ -396,7 +404,9 @@ module.exports = function(p5) {
         dlog('Drawing text at ', msg, x, adjX, y, p1[0], p1[1], width, height);
 
         if (this.plotter) {
-            // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
+            if (SELECT_PEN) {
+                this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
+            }
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
             this.plotter.drawText(msg, {
                 rotation: (270 + this.rotation_ * (180 / Math.PI)) % 360,

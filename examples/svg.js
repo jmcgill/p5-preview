@@ -258,6 +258,10 @@ function drawRect(r) {
     const height = parseInt(r.getAttribute('height'), 10);
     const st = r.getAttribute('stroke') || '#000000';
     const sw = parseInt(r.getAttribute('stroke-width'), 10);
+    // const fill = parseInt(r.getAttribute('fill'));
+    // if (fill) {
+    //     return;
+    // }
 
     if (st) {
         stroke(color(st));
@@ -281,25 +285,29 @@ function drawText(t) {
     let y = parseInt(t.getAttribute('y'), 10) || 0;
     let fontSize = parseInt(t.getAttribute('font-size'), 10);
     let transform = t.getAttribute('transform');
+    const anchor = t.getAttribute('text-anchor');
     const spans = t.getElementsByTagName("tspan");
+
+    stroke(0, 0, 0);
+
     let yOffset = 0;
     for (let s of spans) {
-        x = x + (parseInt(s.getAttribute('x'), 10) || 0) + (parseInt(s.getAttribute('dx'), 10) || 0);
-        y = y + (parseInt(s.getAttribute('y'), 10) || 0) + (parseInt(s.getAttribute('dy'), 10) || 0);
+        //nx = x + (parseInt(s.getAttribute('x'), 10) || 0) + (parseInt(s.getAttribute('dx'), 10) || 0);
+        //ny = y + (parseInt(s.getAttribute('y'), 10) || 0) + (parseInt(s.getAttribute('dy'), 10) || 0);
+        nx = x;
+        ny = y;
 
         // HACK: Treat all transforms as rotate 90 degrees
         push();
-        // // We subtract half line height
-        //
-        textSize(fontSize / 5);
-        translate(x, y);
+
+        textSize(fontSize);
+        translate(nx, ny);
         if (transform) {
             rotate(PI / 2);
         } else {
             rotate(PI);
         }
         translate(0, yOffset)
-        // console.log('Text is: ', s.innerHTML)
         text(s.innerHTML, 0, 0);
         pop();
         // rotate(-PI / 2);
@@ -418,11 +426,11 @@ function drawGroup(svg, state, filter) {
 
     const children = svg.children;
     filterMap(children, 'g', drawGroup, [newState, filter]);
-    filterMap(children, 'polygon', drawPolygon, [newState]);
-    filterMap(children, 'line', drawLine, [newState]);
+    // filterMap(children, 'polygon', drawPolygon, [newState]);
+    // filterMap(children, 'line', drawLine, [newState]);
     filterMap(children, 'rect', drawRect, [newState]);
-    filterMap(children, 'text', drawText, [newState]);
-    filterMap(children, 'polyline', drawPolyline, [newState]);
+    // filterMap(children, 'text', drawText, [newState]);
+    // filterMap(children, 'polyline', drawPolyline, [newState]);
 
     // TODO(jimmy): Re-implement the path parser.
     // filterMap(children, 'path', drawPath);
@@ -434,7 +442,7 @@ const height = 215 * 2;
 const width = 279;
 
 function setup() {
-    createCanvas(width, height, NoHPGL);
+    createCanvas(width, height, HPGL);
     //const data = fs.readFileSync('/Users/jimmy/Desktop/cas9_all.svg');
     const data = fs.readFileSync('/Users/jimmy/out_planer.svg');
     setupComplete();
