@@ -80,7 +80,7 @@ module.exports = function(p5) {
 
                         const op = that.operations.shift();
                         op();
-                    }, 200);
+                    }, 300);
                 });
             }, 1000);
         } else {
@@ -397,6 +397,7 @@ module.exports = function(p5) {
 
         if (this.plotter) {
             // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
+            this.plotter.setVelocity(0.1);
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
             this.plotter.drawText(msg, {
                 rotation: (270 + this.rotation_ * (180 / Math.PI)) % 360,

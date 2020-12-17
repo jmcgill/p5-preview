@@ -435,8 +435,8 @@ const width = 279;
 
 function setup() {
     createCanvas(width, height, NoHPGL);
-    //const data = fs.readFileSync('/Users/jimmy/Desktop/cas9_all.svg');
-    const data = fs.readFileSync('/Users/jimmy/out_planer.svg');
+    const data = fs.readFileSync('/Users/jimmy/Desktop/Desktop/cas9_all.svg');
+    //const data = fs.readFileSync('/Users/jimmy/out_planer.svg');
     setupComplete();
 
     stroke(0, 0, 0);
@@ -444,8 +444,8 @@ function setup() {
 
     // Customize these for a specific SVG
     translate(30, 10)
-    scale(0.045)
-    let filter = '.*';
+    scale(0.2)
+    let filter = 'cas9_all|Text';
     // let filter = 'cas9_all|Fills';
 
     const parser = new DOMParser();
