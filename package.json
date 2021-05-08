@@ -24,7 +24,7 @@
   "dependencies": {
     "chokidar": "^3.3.1",
     "geom2d": "0.0.4",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.7",
     "hpgl": "^0.8.7-10",
     "moment": "^2.24.0",
     "serialport": "^9.0.0"
