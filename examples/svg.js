@@ -323,68 +323,115 @@ function drawPolyline(p) {
     endShape();
 }
 
+let count = 0;
 function drawPath(path) {
-    // const code = path.getAttribute('d');
-    // const components = code.split(/(?=[A-Za-z])/);
-    // const st  = p.getAttribute('stroke') || '#000000';
-    //
-    // beginShape(POINTS);
-    // for (let component of components) {
-    //     if (component[0] === 'M') {
-    //         const p = component.substr(1).split(',');
-    //         x = parseFloat(p[0], 10) - ox;
-    //         y = parseFloat(p[1], 10) - oy;
-    //     } else if (component[0] === 'l') {
-    //         let m = component.substr(1).replace(/-/g, ',-');
-    //         if (m[0] === ',') {
-    //             m = m.slice(1);
-    //         }
-    //         const p = m.split(',');
-    //         const x1 = parseFloat(p[0], 10);
-    //         const y1 = parseFloat(p[1], 10);
-    //         //line(x, y, x + x1, y + y1);
-    //         vertex(x, y);
-    //         vertex(x + x1, y + y1);
-    //         x = x + x1;
-    //         y = y + y1;
-    //     } else if (component[0] === 'c') {
-    //         let m = component.substr(1).replace(/-/g, ',-');
-    //         if (m[0] === ',') {
-    //             m = m.slice(1);
-    //         }
-    //         const p = m.split(',');
-    //         const c1x = parseFloat(p[0], 10) + x;
-    //         const c1y = parseFloat(p[1], 10) + y;
-    //         const c2x = parseFloat(p[2], 10) + x;
-    //         const c2y = parseFloat(p[3], 10) + y;
-    //         const x2 = parseFloat(p[4], 10) + x;
-    //         const y2 = parseFloat(p[5], 10) + y;
-    //         const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
-    //         for (let i = 0; i < steps.length; ++i) {
-    //             vertex(steps[i].x, steps[i].y);
-    //             // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
-    //         }
-    //         x = x2;
-    //         y = y2;
-    //     } else if (component[0] === 'C') {
-    //         let p = component.substr(1).replace(/-/g, ',-').split(',');
-    //         const c1x = parseFloat(p[0], 10) - ox;
-    //         const c1y = parseFloat(p[1], 10) - oy;
-    //         const c2x = parseFloat(p[2], 10) - ox;
-    //         const c2y = parseFloat(p[3], 10) - oy;
-    //         const x2 = parseFloat(p[4], 10) - ox;
-    //         const y2 = parseFloat(p[5], 10) - oy;
-    //         console.log('Curve: ', x, y, x2, y2, c1x, c1y, c2x, c2y);
-    //         const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
-    //         for (let i = 0; i < steps.length; ++i) {
-    //             vertex(steps[i].x, steps[i].y);
-    //             // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
-    //         }
-    //         x = x2;
-    //         y = y2;
-    //     }
-    // }
-    // endShape();
+    count += 1;
+    //if (count < 33 || count > 33) return;
+    const code = path.getAttribute('d');
+    const components = code.split(/(?=[A-Za-z])/);
+    const st  = path.getAttribute('stroke') || '#000000';
+
+    let x0 = null;
+    let y0 = null;
+    let lastCommand = null;
+
+    beginShape(POINTS);
+    let inPath = true;
+    for (let component of components) {
+        if (component[0] === 'M') {
+            // endShape();
+            // beginShape(POINTS);
+            // This is a move only - we do not add a vertex.
+            const p = component.substr(1).split(',');
+            x = parseFloat(p[0], 10);
+            y = parseFloat(p[1], 10);
+            vertex(x, y);
+
+            if (x0 === null || lastCommand === 'Z') {
+                x0 = x;
+                y0 = y;
+            }
+        } else if (component[0] === 'Z') {
+            vertex(x0, y0);
+            endShape();
+            beginShape(POINTS);
+        } else if (component[0] === 'l') {
+            let m = component.substr(1).replace(/-/g, ',-');
+            if (m[0] === ',') {
+                m = m.slice(1);
+            }
+            const p = m.split(',');
+            const x1 = parseFloat(p[0], 10);
+            const y1 = parseFloat(p[1], 10);
+            //line(x, y, x + x1, y + y1);
+            vertex(x, y);
+            vertex(x + x1, y + y1);
+            x = x + x1;
+            y = y + y1;
+        } else if (component[0] === 'L') {
+            let m = component.substr(1).replace(/-/g, ',-');
+            if (m[0] === ',') {
+                m = m.slice(1);
+            }
+            const p = m.split(',');
+            const x1 = parseFloat(p[0], 10);
+            const y1 = parseFloat(p[1], 10);
+            //line(x, y, x + x1, y + y1);
+            // vertex(x, y);
+            vertex(x1, y1);
+            x = x1;
+            y = y1;
+            // x = x + x1;
+            // y = y + y1;
+        } else if (component[0] === 'c') {
+            let m = component.strip().substr(1).replace(/-/g, ',-');
+            if (m[0] === ',') {
+                m = m.slice(1);
+            }
+            const p = m.split(',');
+            const c1x = parseFloat(p[0], 10) + x;
+            const c1y = parseFloat(p[1], 10) + y;
+            const c2x = parseFloat(p[2], 10) + x;
+            const c2y = parseFloat(p[3], 10) + y;
+            const x2 = parseFloat(p[4], 10) + x;
+            const y2 = parseFloat(p[5], 10) + y;
+            const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
+            for (let i = 0; i < steps.length; ++i) {
+                vertex(steps[i].x, steps[i].y);
+                // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
+            }
+            x = x2;
+            y = y2;
+        } else if (component[0] === 'C') {
+            // If a coordinate is negative, it *can* (but may not) ommit the previous separator
+            let p = component.substr(1).replace(/-/g, ',-');
+
+            // Coordinates can be separated by a space or a comma.
+            p = p.split(/ |,/);
+
+            // Trim any empty components
+            p = p.filter(e => e !== "" );
+            console.log(component);
+            console.log(p);
+            const c1x = parseFloat(p[0], 10);
+            const c1y = parseFloat(p[1], 10);
+            const c2x = parseFloat(p[2], 10);
+            const c2y = parseFloat(p[3], 10);
+            const x2 = parseFloat(p[4], 10);
+            const y2 = parseFloat(p[5], 10);
+            console.log('Curve: ', x, y, x2, y2, c1x, c1y, c2x, c2y);
+            const steps = curveToLines(x, y, x2, y2, c1x, c1y, c2x, c2y);
+            for (let i = 0; i < steps.length; ++i) {
+                vertex(steps[i].x, steps[i].y);
+                // line(steps[i-1].x, steps[i-1].y, steps[i].x, steps[i].y);
+            }
+            x = x2;
+            y = y2;
+        }
+
+        lastCommand = component[0];
+    }
+    endShape();
 }
 
 function drawGroup(svg, state, filter) {
@@ -405,7 +452,7 @@ function drawGroup(svg, state, filter) {
 
     // Handle simple transforms
     const transform = svg.getAttribute('transform');
-    const match = /translate\(([.\d]+), ([.\d]+)\)/.exec(transform);
+    const match = /translate\(([-.\d]+), ([-.\d]+)\)/.exec(transform);
     if (match) {
         translate(parseFloat(match[1]), parseFloat(match[2]));
     }
@@ -423,6 +470,7 @@ function drawGroup(svg, state, filter) {
     filterMap(children, 'rect', drawRect, [newState]);
     filterMap(children, 'text', drawText, [newState]);
     filterMap(children, 'polyline', drawPolyline, [newState]);
+    filterMap(children, 'path', drawPath, [newState]);
 
     // TODO(jimmy): Re-implement the path parser.
     // filterMap(children, 'path', drawPath);
@@ -434,8 +482,8 @@ const height = 215 * 2;
 const width = 279;
 
 function setup() {
-    createCanvas(width, height, NoHPGL);
-    const data = fs.readFileSync('/Users/jimmy/Desktop/Desktop/cas9_all.svg');
+    createCanvas(width, height, HPGL);
+    // const data = fs.readFileSync('/Users/jimmy/Desktop/nit.svg');
     //const data = fs.readFileSync('/Users/jimmy/out_planer.svg');
     setupComplete();
 
@@ -443,14 +491,35 @@ function setup() {
     rectMode(CORNER);
 
     // Customize these for a specific SVG
-    translate(30, 10)
-    scale(0.2)
-    let filter = 'cas9_all|Text';
+    // translate(0, 140)
+    scale(0.3);
+    let filter = '.*';
     // let filter = 'cas9_all|Fills';
 
-    const parser = new DOMParser();
-    const svg = parser.parseFromString(data, "text/xml");
-    drawGroup(svg.documentElement, {}, filter);
+    const icons = ['flask', 'microscope', 'nat', 'dna', 'cake', 'heart', 'bread'];
+
+    translate(10, 10)
+
+    const cols = 12;
+    const rows = 14;
+    let idx = 0;
+    for (var yy = 0; yy < rows; ++yy) {
+        for (var xx = 0; xx < cols; ++xx) {
+            // const idx = Math.floor(Math.random() * icons.length);
+            idx = (idx + 1) % icons.length;
+            // if (yy < 3) continue;
+            const path = '/Users/jimmy/Desktop/' + icons[idx] + '.svg';
+            const data = fs.readFileSync(path);
+            const parser = new DOMParser();
+            const svg = parser.parseFromString(data, "text/xml");
+            push();
+            translate(80 * xx, 100 * yy);
+            drawGroup(svg.documentElement, {}, filter);
+            pop();
+        }
+    }
+
+
 }
 
 function draw() {

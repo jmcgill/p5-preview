@@ -39,6 +39,9 @@ module.exports = function(p5) {
         this.fill_g_ = 255;
         this.fill_b_ = 255;
 
+        // this.debug_rotation = true;
+        // this.plotForReal = false;
+
         // Printer is always rotated 90 degrees
         this.current_transform = new affine.translation(0, 0);
 
@@ -70,7 +73,7 @@ module.exports = function(p5) {
 
                     // this.selectPen(4);
 
-                    this.setVelocity(0.1);
+                    this.setVelocity(1.0);
 
                     setInterval(function () {
                         // console.log('Running operations heartbeat');
@@ -154,8 +157,25 @@ module.exports = function(p5) {
         //base.leftComposeWith(new affine.rotation((Math.PI / 2)));
         //base.leftComposeWith(new affine.translation(this.height/2, this.width/2));
         //base.leftComposeWith(this.current_transform);
-        const base = new affine.rotation(-Math.PI / 2);
-        base.leftComposeWith(new affine.flipY());
+
+
+        // const base = new affine.rotation(-0.5);
+        // const base = new affine.flipX();
+
+        // V3
+        const base = new affine.translation(297 / 2, 420 / 2)
+        base.rightComposeWith(new affine.rotation(-Math.PI / 2));
+        base.rightComposeWith(new affine.translation(-85, -148.5));
+
+        // V2
+        //const base = new affine.translation(-297 / 2, -420 / 2)
+        // base.rightComposeWith(new affine.rotation(-Math.PI / 4));
+        // base.rightComposeWith(new affine.translation(300, 300));
+
+        // base.rightComposeWith(new affine.flipY());
+        // base.leftComposeWith(new affine.flipY());
+
+
         //const base = new affine.translation(-279/2, -215);
         //base.rightComposeWith(new affine.rotation((Math.PI / 2)));
         //base.rightComposeWith(new affine.translation(279/2, 215));
@@ -168,6 +188,7 @@ module.exports = function(p5) {
         if (this.r_ === 255 && this.g_ === 255 && this.b_ === 255) {
             return;
         }
+        // console.log('Part 2')
 
         // Apply the current transforms (e.g. scale)
         const p1 = this.current_transform.transformPair(x1, y1);
@@ -180,7 +201,7 @@ module.exports = function(p5) {
         p5.Renderer2D.prototype.line.call(this, p1[0], p1[1] ,p2[0], p2[1]);
         p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
         dlog('Line Async', this.r_, this.g_, this.b_, p1[0], p1[1], p2[0], p2[1]);
-        dlog(`Drawing a line from ${x1},${y1} to ${x2},${y2}`);
+        console.log(`Drawing a1077 line from ${x1},${y1} to ${x2},${y2}`);
 
         // Plotter operates with an additional 90 degree rotation
         //const base = this.current_transform.copy();
@@ -193,9 +214,9 @@ module.exports = function(p5) {
         const pp1 = base.transformPair(x1, y1);
         const pp2 = base.transformPair(x2, y2);
 
-        dlog(`Drawing line ${pp1[0]},${pp1[1]} to ${pp2[0]}, ${pp2[1]}`);
+        console.log(`Drawing projected line ${pp1[0]},${pp1[1]} to ${pp2[0]}, ${pp2[1]}`);
 
-        if (this.plotter && !opt_noplot) {
+        if (this.plotter && !opt_noplot && this.plotForReal) {
             // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
             dlog(`Plotter move to ${pp1[0] / 10}, ${pp1[1] / 10}`)
@@ -205,7 +226,8 @@ module.exports = function(p5) {
         }
 
         // Render rotated
-        if (this.debugRotation) {
+        //if (this.debugRotation) {
+        if (true) {
             p5.Renderer2D.prototype.stroke.call(this, 255, 0, 255);
             p5.Renderer2D.prototype.line.call(this, pp1[0], pp1[1] ,pp2[0], pp2[1]);
             p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
@@ -294,17 +316,21 @@ module.exports = function(p5) {
     };
 
     RendererHPGL.prototype.rect = function(args) {
+        console.log('**** DRAW RECT');
         this.operations.push(RendererHPGL.prototype.rectAsync.bind(this, this._rectMode, this._doStroke, args));
     };
 
     // TODO(jimmy): Handle Rect Mode, optional hight and radiused corners
     RendererHPGL.prototype.rectAsync = function(mode, doStroke, args, opt_noplot, opt_color) {
+        console.log('**** DRAW RECT ASYNC');
         const x1 = args[0];
         const y1 = args[1];
         const w = args[2];
         const h = args[3];
 
-        dlog('Rect Async ', mode, doStroke, opt_noplot, opt_color, x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
+        opt_noplot = false;
+
+        console.log('Rect Async ', mode, doStroke, opt_noplot, opt_color, x1, y1, w, h, this.fill_r_, this.fill_g_, this.fill_b_);
         const offset = [0, 0];
         const hw = w / 2;
         const hh = h / 2;
@@ -345,13 +371,17 @@ module.exports = function(p5) {
             const base = this.getPlotterTransform();
             const pp1 = base.transformPair(x1, y1);
 
+            console.log('*** Drawing rectangle: ', this.debugRotation, this.plotForReal);
+
             if (this.debugRotation) {
+                console.log('Drawing debug');
                 p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0, 0);
                 p5.Renderer2D.prototype.rect.call(this, [pp1[0], pp1[1], sh, sw]);
                 p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_, 255);
             }
 
-            if (this.plotter && !opt_noplot) {
+            if ((this.plotter && !opt_noplot) && this.plotForReal) {
+                console.log('Drawing on plotter');
                 // this.plotter.selectPen(this.colorToPen(this.fill_r_, this.fill_g_, this.fill_b_))
                 this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
                 this.plotter.drawRectangle(sh / 10, sw / 10,{
@@ -397,10 +427,11 @@ module.exports = function(p5) {
 
         if (this.plotter) {
             // this.plotter.selectPen(this.colorToPen(this.r_, this.g_, this.b_));
-            this.plotter.setVelocity(0.1);
+            this.plotter.setVelocity(1.0);
             this.plotter.moveTo(pp1[0] / 10, pp1[1] / 10);
             this.plotter.drawText(msg, {
-                rotation: (270 + this.rotation_ * (180 / Math.PI)) % 360,
+                rotation: 90,
+                // rotation: (270 + this.rotation_ * (180 / Math.PI)) % 360,
                 scale: this.font_size * this.scale_
             });
             this.rectAsync('corner', [adjX, y, this.font_width * this.font_size * msg.length, this.font_height * this.font_size]);
@@ -420,8 +451,8 @@ module.exports = function(p5) {
         this.current_transform.rightComposeWith(translate);
     };
 
-    RendererHPGL.prototype.scale = function(f) {
-        this.operations.push(RendererHPGL.prototype.scaleAsync.bind(this, f));
+    RendererHPGL.prototype.scale = function(f1, f2) {
+        this.operations.push(RendererHPGL.prototype.scaleAsync.bind(this, f1, f2));
     };
 
     // RendererHPGL.prototype.beginShape = function() {
@@ -478,9 +509,20 @@ module.exports = function(p5) {
         }
 
         const p = base.transformPair(vertices[0][0], vertices[0][1]);
-        if (this.plotter) {
+        if (this.plotter && this.plotForReal) {
             this.plotter.moveTo(p[0] / 10, p[1] / 10);
             this.plotter.drawLines(lines);
+        }
+
+        console.log('*** NOW DRAWING ROTATED LINES')
+        if (true) {
+            p5.Renderer2D.prototype.stroke.call(this, 255, 0, 255);
+            for (var i = 1; i < vertices.length; ++i) {
+                const p1 = base.transformPair(vertices[i-1][0], vertices[i-1][1]);
+                const p2 = base.transformPair(vertices[i][0], vertices[i][1]);
+                p5.Renderer2D.prototype.line.call(this, p1[0], p1[1] ,p2[0], p2[1]);
+            }
+            p5.Renderer2D.prototype.stroke.call(this, this.r_, this.g_, this.b_);
         }
 
         this.vertices = [];
@@ -488,16 +530,26 @@ module.exports = function(p5) {
 
 
 
-    RendererHPGL.prototype.scaleAsync = function(f) {
-        const scale = new affine.scaling(f, f);
+    RendererHPGL.prototype.scaleAsync = function(f1, f2) {
+        console.log('*** SCALE ASYNC', f1, f2);
+        const scale = new affine.scaling(f1, f2);
         this.current_transform.rightComposeWith(scale);
 
         dlog(transformToString(this.current_transform));
 
-        // We store scale separately since it is a scalar transform.
+        // We store scale separately since it is a scalar transform and is needed for e.g. fonts
         // TODO(jimmy): Push and pop as needed
-        this.scale_ = this.scale_ * f;
+        this.scale_ = this.scale_ * f1;
     };
+
+    RendererHPGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
+        this.operations.push(RendererHPGL.prototype.applyMatrixAsync.bind(this, a, b, c, d, e, f));
+    };
+
+    RendererHPGL.prototype.applyMatrixAsync = function(a, b, c, d, e, f) {
+        const transform = new affine.affine2d(a, c, b, d, e, f);
+        this.current_transform.rightComposeWith(transform);
+    }
 
     RendererHPGL.prototype.rotate = function(rads) {
         this.operations.push(RendererHPGL.prototype.rotateAsync.bind(this, rads));
@@ -511,7 +563,25 @@ module.exports = function(p5) {
 
     // Only circles today - height ignored
     RendererHPGL.prototype.ellipse = function(args) {
-        this.operations.push(RendererHPGL.prototype.circleAsync.bind(this, args[0], args[1], args[2]));
+        this.operations.push(RendererHPGL.prototype.ellipseAsync.bind(this, args[0], args[1], args[2], args[3]));
+    };
+
+    RendererHPGL.prototype.ellipseAsync = function(x, y, dx, dy) {
+        const lines = [];
+        const segments = 100; //360 * 10;
+        const arc = (360 / segments);
+        const rx = (dx / 2);
+        const ry = (dy / 2);
+
+        for (let i = 0; i <= segments; ++i) {
+            const angle = (i * arc);
+            const r = angle * (Math.PI / 180);
+            let xx = (Math.cos(r) * (rx) + (x + rx));
+            let yy = (Math.sin(r) * (ry) + (y + ry));
+            lines.push([xx, yy]);
+        }
+
+        this.endShapeAsync(null, lines);
     };
 
     RendererHPGL.prototype.circleAsync = function(x, y, diameter) {
