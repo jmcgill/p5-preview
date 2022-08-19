@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Models - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Models.html">Models</a><ul class='members'><li data-type='member'><a href="Models.html#.7440A">7440A</a></li><li data-type='member'><a href="Models.html#.7470A">7470A</a></li><li data-type='member'><a href="Models.html#.7475A">7475A</a></li><li data-type='member'><a href="Models.html#.7550A">7550A</a></li><li data-type='member'><a href="Models.html#.7580A">7580A</a></li><li data-type='member'><a href="Models.html#.7585A">7585A</a></li><li data-type='member'><a href="Models.html#.7586B">7586B</a></li><li data-type='member'><a href="Models.html#.GENERIC">GENERIC</a></li></ul></li><li><a href="Plotter.html">Plotter</a><ul class='methods'><li data-type='method'><a href="Plotter.html#abort">abort</a></li><li data-type='method'><a href="Plotter.html#connect">connect</a></li><li data-type='method'><a href="Plotter.html#destroy">destroy</a></li><li data-type='method'><a href="Plotter.html#disconnect">disconnect</a></li><li data-type='method'><a href="Plotter.html#drawCircle">drawCircle</a></li><li data-type='method'><a href="Plotter.html#drawLine">drawLine</a></li><li data-type='method'><a href="Plotter.html#drawLines">drawLines</a></li><li data-type='method'><a href="Plotter.html#drawRectangle">drawRectangle</a></li><li data-type='method'><a href="Plotter.html#drawText">drawText</a></li><li data-type='method'><a href="Plotter.html#getMargins">getMargins</a></li><li data-type='method'><a href="Plotter.html#getModel">getModel</a></li><li data-type='method'><a href="Plotter.html#getPaperSize">getPaperSize</a></li><li data-type='method'><a href="Plotter.html#getPlottableArea">getPlottableArea</a></li><li data-type='method'><a href="Plotter.html#getRs232Error">getRs232Error</a></li><li data-type='method'><a href="Plotter.html#getStatus">getStatus</a></li><li data-type='method'><a href="Plotter.html#initialize">initialize</a></li><li data-type='method'><a href="Plotter.html#moveTo">moveTo</a></li><li data-type='method'><a href="Plotter.html#plotFile">plotFile</a></li><li data-type='method'><a href="Plotter.html#queue">queue</a></li><li data-type='method'><a href="Plotter.html#selectPen">selectPen</a></li><li data-type='method'><a href="Plotter.html#send">send</a></li><li data-type='method'><a href="Plotter.html#setVelocity">setVelocity</a></li><li data-type='method'><a href="Plotter.html#startCapturingToFile">startCapturingToFile</a></li><li data-type='method'><a href="Plotter.html#stopCapturingToFile">stopCapturingToFile</a></li><li data-type='method'><a href="Plotter.html#storePen">storePen</a></li><li data-type='method'><a href="Plotter.html#utf8toHpgl">utf8toHpgl</a></li><li data-type='method'><a href="Plotter.html#wait">wait</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Plotter.html#event:abort">abort</a></li><li><a href="Plotter.html#event:connected">connected</a></li><li><a href="Plotter.html#event:data">data</a></li><li><a href="Plotter.html#event:error">error</a></li><li><a href="Plotter.html#event:fileaborted">fileaborted</a></li><li><a href="Plotter.html#event:fileplotted">fileplotted</a></li><li><a href="Plotter.html#event:ready">ready</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Models</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Models
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="Models"><span class="type-signature"></span>new Models<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line272">line 272</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>The <code>Models</code> class is basically an enumeration class that provides information about all the
+devices (only a few plotters for now) that are supported by the library.</p>
+<blockquote>
+<p>Note: the only plotter that was tested so far is the <strong>HP 7475A</strong>. We are assuming the others
+are going to work based on the documentation we found for them.</p>
+</blockquote>
+<p>If you have a plotter that is not listed here, <a href="https://twitter.com/jpcote">contact the author</a>
+to see if we can add support for your device. Adding support for a new model simply involves
+retrieving the information such as the one found in this class for other devices.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".7440A"><span class="type-signature">(static) </span>7440A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line346">line 346</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7440A</strong> plotter. This model is also known as the <em>Color Pro
+Graphics</em> Plotter. It is an ANSI A and ISO A4 plotter with an 8-pen carousel. Note that the
+paper size cannot be changed programmatically. It has to be changed by flipping a hardware
+switch on the back of the device.</p>
+<p><strong>Important</strong>: this model can be fitted with an optional <em>Graphics Enhancement Cartridge</em> which
+bumps its buffer memory to 1024 (instead of 60) bytes. The cartridge also adds support for
+various plotting instructions which are not supported by default. For example, without the
+cartridge, this model cannot draw rectangles, circles or arcs, it cannot set the pen thickness,
+etc.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7470A"><span class="type-signature">(static) </span>7470A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line390">line 390</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7470A</strong> plotter.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7475A"><span class="type-signature">(static) </span>7475A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line416">line 416</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7475A</strong> plotter. It is a A/A4 and B/A3 size plotter with a 6-pen
+carousel.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7550A"><span class="type-signature">(static) </span>7550A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line492">line 492</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7550A</strong> plotter.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7580A"><span class="type-signature">(static) </span>7580A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line534">line 534</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7580A</strong> plotter.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7585A"><span class="type-signature">(static) </span>7585A<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line571">line 571</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7585A</strong> plotter.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".7586B"><span class="type-signature">(static) </span>7586B<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line609">line 609</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Characteristics for the <strong>HP 7586B</strong> plotter.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".GENERIC"><span class="type-signature">(static) </span>GENERIC<span class="type-signature"> :<a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hpgl.js.html">hpgl.js</a>, <a href="hpgl.js.html#line307">line 307</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#PlotterCharacteristics">PlotterCharacteristics</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer style="font-style: normal; font-size: 0.9em">
+
+  <hr>
+  <b>hpgl v0.8.7-10</b> /
+  ©<a href="http://cote.cc">Jean-Philippe Côté</a>, 2016.
+
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

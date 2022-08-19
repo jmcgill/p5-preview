@@ -1,0 +1,37 @@
+{
+  "name": "hpgl",
+  "version": "0.8.7-10",
+  "description": "A Node.js library to communicate with HPGL-compatible devices such as plotters and printers.",
+  "author": "Jean-Philippe Côté",
+  "main": "hpgl.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/djipco/hpgl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/djipco/hpgl/issues"
+  },
+  "keywords": [
+    "hpgl",
+    "hp-gl",
+    "plotter",
+    "printer",
+    "pen plotter"
+  ],
+  "dependencies": {
+    "fs-extra": "^1.0.0",
+    "serialport": "^9.0.0"
+  },
+  "homepage": "https://github.com/djipco/hpgl",
+  "license": "MIT",
+  "devDependencies": {
+    "docdash": "^0.4.0",
+    "grunt": "^1.0.1",
+    "grunt-bumpup": "^0.6.3",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-gh-pages": "^2.0.0",
+    "grunt-git": "^1.0.1",
+    "grunt-jsdoc": "^2.2.1",
+    "grunt-release": "^0.14.0"
+  }
+}

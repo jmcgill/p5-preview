@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Models.html">Models</a><ul class='members'><li data-type='member'><a href="Models.html#.7440A">7440A</a></li><li data-type='member'><a href="Models.html#.7470A">7470A</a></li><li data-type='member'><a href="Models.html#.7475A">7475A</a></li><li data-type='member'><a href="Models.html#.7550A">7550A</a></li><li data-type='member'><a href="Models.html#.7580A">7580A</a></li><li data-type='member'><a href="Models.html#.7585A">7585A</a></li><li data-type='member'><a href="Models.html#.7586B">7586B</a></li><li data-type='member'><a href="Models.html#.GENERIC">GENERIC</a></li></ul></li><li><a href="Plotter.html">Plotter</a><ul class='methods'><li data-type='method'><a href="Plotter.html#abort">abort</a></li><li data-type='method'><a href="Plotter.html#connect">connect</a></li><li data-type='method'><a href="Plotter.html#destroy">destroy</a></li><li data-type='method'><a href="Plotter.html#disconnect">disconnect</a></li><li data-type='method'><a href="Plotter.html#drawCircle">drawCircle</a></li><li data-type='method'><a href="Plotter.html#drawLine">drawLine</a></li><li data-type='method'><a href="Plotter.html#drawLines">drawLines</a></li><li data-type='method'><a href="Plotter.html#drawRectangle">drawRectangle</a></li><li data-type='method'><a href="Plotter.html#drawText">drawText</a></li><li data-type='method'><a href="Plotter.html#getMargins">getMargins</a></li><li data-type='method'><a href="Plotter.html#getModel">getModel</a></li><li data-type='method'><a href="Plotter.html#getPaperSize">getPaperSize</a></li><li data-type='method'><a href="Plotter.html#getPlottableArea">getPlottableArea</a></li><li data-type='method'><a href="Plotter.html#getRs232Error">getRs232Error</a></li><li data-type='method'><a href="Plotter.html#getStatus">getStatus</a></li><li data-type='method'><a href="Plotter.html#initialize">initialize</a></li><li data-type='method'><a href="Plotter.html#moveTo">moveTo</a></li><li data-type='method'><a href="Plotter.html#plotFile">plotFile</a></li><li data-type='method'><a href="Plotter.html#queue">queue</a></li><li data-type='method'><a href="Plotter.html#selectPen">selectPen</a></li><li data-type='method'><a href="Plotter.html#send">send</a></li><li data-type='method'><a href="Plotter.html#setVelocity">setVelocity</a></li><li data-type='method'><a href="Plotter.html#startCapturingToFile">startCapturingToFile</a></li><li data-type='method'><a href="Plotter.html#stopCapturingToFile">stopCapturingToFile</a></li><li data-type='method'><a href="Plotter.html#storePen">storePen</a></li><li data-type='method'><a href="Plotter.html#utf8toHpgl">utf8toHpgl</a></li><li data-type='method'><a href="Plotter.html#wait">wait</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Plotter.html#event:abort">abort</a></li><li><a href="Plotter.html#event:connected">connected</a></li><li><a href="Plotter.html#event:data">data</a></li><li><a href="Plotter.html#event:error">error</a></li><li><a href="Plotter.html#event:fileaborted">fileaborted</a></li><li><a href="Plotter.html#event:fileplotted">fileplotted</a></li><li><a href="Plotter.html#event:ready">ready</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>hpgl</h1><p><strong>A Node.js library to control HPGL-compatible plotters</strong></p>
+<p><a href="https://www.npmjs.com/package/hpgl"><img src="https://img.shields.io/npm/v/hpgl.svg" alt="npm"></a>
+<a href="https://www.npmjs.com/package/hpgl"><img src="https://img.shields.io/npm/dt/hpgl.svg" alt="npm"></a>
+<a href="https://beerpay.io/djipco/hpgl"><img src="https://beerpay.io/djipco/hpgl/badge.svg?style=flat" alt="Beerpay"></a> </p>
+<h3>About</h3><p>The <code>hpgl</code> library makes it possible to interact with plotters that support the <em>Hewlett-Packard 
+Graphics Language</em> (a.k.a. <strong>hpgl</strong>). This language is the <em>de facto</em> standard for most plotters. </p>
+<p><strong>Warning: This library is still in early stages of development. It should not be used in 
+production.</strong></p>
+<h3>Compatibility</h3><p>This library relies on external modules for serial communication. To use it in a pure Node.js, 
+environment, you will need to install and use the 
+<a href="https://www.npmjs.com/package/serialport">serialport</a> module. If you want to use this library 
+inside <a href="https://developer.chrome.com/apps/about_apps">Chrome Apps</a> or <a href="http://nwjs.io/">NW.js</a>
+applications, you will need to install the <a href="https://www.npmjs.com/package/browser-serialport">browser-serialport</a> 
+module instead (<strong>version 2.1.0 or greater</strong>). </p>
+<blockquote>
+<p><em>Note: it is possible to use <code>node-serialport</code> within NW.js and Electron projects but it needs to 
+be specifically recompiled for those environment.</em></p>
+</blockquote>
+<p>So far, the library has only beed tested with <a href="http://hpmuseum.net/display_item.php?hw=74">HP 7475A</a>
+and <a href="http://hpmuseum.net/display_item.php?hw=80">HP 7440A</a> plotters. If you have success with other 
+makes or models, <a href="https://twitter.com/jpcote">let me know</a>. Beware that some HP plotters are only 
+equipped with a proprietary HPIB or GPIB interface. To use this library, your plotter must have a 
+<strong>serial</strong> interface (RS-232-C).</p>
+<h3>Coordinate System</h3><p>The plotting coordinate system is anchored in the top-left corner, just like a computer screen. 
+This means positive <code>x</code> goes right and positive <code>y</code> goes down. By default, plotters usually work 
+differently, but I find it easier to stick with the computer screen standard.</p>
+<h3>Getting Started</h3><p>To get started, you will need a few pieces of hardware:</p>
+<ul>
+<li>HPGL-compatible plotter with a serial interface;</li>
+<li>USB-to-Serial adapter (unless your computer has a serial port);</li>
+<li>Male DB-25 to female DB-9 cable (a.k.a. null modem cable);</li>
+<li>Pens that fit your plotter;</li>
+<li>Paper.</li>
+</ul>
+<p>Your plotter needs to be set to a line speed of 9600 baud with 
+<a href="https://en.wikipedia.org/wiki/8-N-1">8-N-1</a> settings. Chances are high this is already the case. If
+not, you may need to adjust some dip switches on your device. Refer to the manufacturers's 
+documentation.</p>
+<h3>Example</h3><p>The first thing you need to do to get plotting is instantiate the object used for serial 
+communication. If you are working on a Node.js project using the <code>serialport</code> module, this is how 
+you would do it:</p>
+<pre class="prettyprint source lang-javascript"><code>// Import the 'serialport' module and instantiate it. Do not forget to set 'autoOpen' to false in 
+// the options.
+const SerialPort = require(&quot;serialport&quot;);
+var transport = new SerialPort(&quot;/dev/tty.usbserial&quot;, {autoOpen: false});
+</code></pre><p>If you are working on a Chrome or NW.js application, the procedure is slightly different:</p>
+<pre class="prettyprint source lang-javascript"><code>// Import the 'browser-serialport' module and instantiate it. Pass 'false' as the third parameter of
+// the SerialPort constructor so no automatic connection attempt is made.
+const SerialPort = require(&quot;browser-serialport&quot;).SerialPort;
+var transport = new SerialPort(&quot;/dev/tty.usbserial&quot;, {}, false);</code></pre><p>Once the <code>transport</code> variable is ready, the remainining of the code is exactly the same no matter
+which transport you use. For example, here is the code necessary to draw &quot;Hello, World!&quot;.</p>
+<pre class="prettyprint source lang-javascript"><code>
+// Import the 'Plotter' class and instantiate it
+const Plotter = require(&quot;hpgl&quot;).Plotter;
+var plotter = new Plotter();
+
+// Connect the device and add a callback to draw some text.
+plotter.connect(transport, {}, function(error) {
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  this
+    .moveTo(1, 1)
+    .drawText(&quot;Hello, World!&quot;);
+
+});</code></pre><p>As you can see above, you first need to create a <code>Plotter</code> object and call its <code>connect()</code> method 
+passing in the <code>transport</code> variable, some optionnal settings and a function to trigger once the 
+device is ready. Note that <code>this</code> is bound to the <code>Plotter</code> object and that plotting methods are 
+chainable.</p>
+<h3>Using Multiple Plotteres</h3><p>This library can be used to connect several plotters to the same host. However, not all 
+USB-to-Serial chipsets support this. </p>
+<p>For example, the Prolific 2303 driver crashes my computer when I try use more than one adapter. On 
+the other hand, the Texas Instrument/TI driver works beautifully with multiple devices.</p>
+<h3>Documentation</h3><p>I will try to maintain an up-to-date <a href="https://djipco.github.io/hpgl/">API documentation</a>. A good
+place to start is the <a href="https://djipco.github.io/hpgl/Plotter.html">Plotter class</a>. If you find
+errors, please <a href="https://github.com/djipco/hpgl/issues">file an issue</a> on GitHub.</p>
+<h2>Support the Project</h2><p>If you find this library useful, you can <strong><a href="https://beerpay.io/cotejp/hpgl">buy me a drink</a></strong> as a 
+token of your appreciation. This would automatically make you even more awesome than you already 
+are!</p>
+<p><a href="https://beerpay.io/cotejp/hpgl"><img src="https://beerpay.io/cotejp/hpgl/badge.svg?style=beer-square" alt="Beerpay"></a></p>
+<p>Cheers!</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer style="font-style: normal; font-size: 0.9em">
+
+  <hr>
+  <b>hpgl v0.8.7-10</b> /
+  ©<a href="http://cote.cc">Jean-Philippe Côté</a>, 2016.
+
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
