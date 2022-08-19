@@ -49,16 +49,16 @@ module.exports = function(p5) {
         var graphics = _createCanvas.apply(this, arguments);
         if (renderer === constants.HPGL) {
             var c = graphics.elt;
-            this._setProperty('_renderer', new p5.RendererHPGL(c, this, true, true));
+            this._setProperty('_renderer', new p5.RendererHPGL(c, w, h, this, true, true));
             this._isdefaultGraphics = true;
             this._renderer.resize(w, h);
             this._renderer._applyDefaults();
         }
         if (renderer === constants.NoHPGL) {
             var c = graphics.elt;
-            this._setProperty('_renderer', new p5.RendererHPGL(c, this, true, false));
+            this._setProperty('_renderer', new p5.RendererHPGL(c, w, h, this, true, false));
             this._isdefaultGraphics = true;
-            this._renderer.resize(w, h);
+            this._renderer.resize(w * 3.7, h * 3.7);
             this._renderer._applyDefaults();
         }
         return this._renderer;

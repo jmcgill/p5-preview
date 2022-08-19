@@ -3,7 +3,10 @@
     <script src="p5.min.js"></script>
     <script src="jquery.min.js"></script>
     <script src="jquery.min.js"></script>
+    <script type="text/javascript" src="dist/dist.js"></script>
+    <script type="text/javascript" src="dist/hpgl.js"></script>
     <script src="file://{{ filename }}"></script>
+
     <!--<script src="file:///Users/jmcgill/src/p5.js-hpgl/dist/p5.hpgl.js"></script>-->
     <script type="text/javascript">
         const parameters = {
@@ -11,7 +14,6 @@
             seed: {{ seed }}
         }
     </script>
-    <script type="text/javascript" src="renderer.js"></script>
     <style>
         body {
             background: #efefef;
@@ -33,6 +35,7 @@
             width: {{ scaledWidth }};
             margin: 0 auto;
             overflow: hidden;
+            background: white;
         }
 
         body {

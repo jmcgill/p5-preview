@@ -6,6 +6,9 @@ const chokidar = require("chokidar");
 const handlebars = require('handlebars');
 const moment = require('moment');
 
+const hpgl = require('./lib/hpgl/hpgl.js');
+const { SerialPort } = require('serialport');
+
 const saverTemplate = handlebars.compile('' + fs.readFileSync('templates/saver-template.html'));
 
 // Default to fit
@@ -22,6 +25,8 @@ let scaledWidth = 100;
 let mainWindow = null;
 
 function reload() {
+  console.log('Reloading with: ', scaledHeight, scaledWidth);
+
   const args = process.argv;
   const filename = process.argv[2];
 
@@ -40,16 +45,47 @@ function reload() {
   mainWindow.loadFile('temp.html');
 }
 
-function setupComplete() {
-  if (inFitMode) {
-    mainWindow.webContents.send('trigger-fit');
-  } else {
-    mainWindow.webContents.send('trigger-zoom');
+// function setupComplete() {
+//   console.log('**** Calling setup complete');
+//   if (inFitMode) {
+//     console.log('Sending trigger fit')
+//     const bounds = mainWindow.getBounds();
+//     mainWindow.webContents.send('triggerFit', bounds);
+//   } else {
+//     mainWindow.webContents.send('trigger-zoom');
+//   }
+// }
+
+function fitToSize(e, height, width) {
+  console.log('Running fit function');
+  console.log('Requested height/width', height, width);
+
+  const bounds = mainWindow.getBounds();
+  console.log('*** BOUNDS IS: ');
+  console.log(bounds);
+  console.log('Window height/width', bounds.height, bounds.width);
+  inFitMode = true;
+
+  const heightScale = (bounds.height - 120) / height;
+  const widthScale = bounds.width / width;
+  console.log('Scaling factor: ', heightScale, widthScale);
+
+  const oldScale = scale;
+  scale = Math.min(heightScale, widthScale);
+
+  scaledHeight = scale * height;
+  scaledWidth = scale * width;
+
+  console.log('Scale is: ', scale, oldScale);
+
+  if (Math.abs(scale - oldScale) > 0.01) {
+    console.log('Triggering reload');
+    reload();
   }
 }
 
 function fit(height, width, windowHeight, windowWidth) {
-  console.log('Running fit function');
+  console.log('Running OLD fit function');
   console.log('Requested height/width', height, width);
   console.log('Window height/width', windowHeight, windowWidth);
   inFitMode = true;
@@ -135,7 +171,6 @@ function createWindow () {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true
     }
   });
 
@@ -178,10 +213,95 @@ function createWindow () {
   });
 }
 
+function readFile(e, path) {
+  return fs.readFileSync(path, 'utf-8');
+}
+
+let plotter;
+let operations = [];
+
+function initializePlotter() {
+  return new Promise((resolve, reject) =>
+  {
+    console.log('Initializing plotter');
+    plotter = new hpgl.Plotter();
+
+    const transport = new SerialPort({
+      path: '/dev/tty.usbserial-AK070I5T',
+      baudRate: 9600,
+      autoOpen: false
+    });
+
+    plotter.on("error", function (err) {
+      console.log('****** Plotter error: ', err);
+    }).on("ready", function () {
+      this.startCapturingToFile("test.hpgl")
+    }).connect(transport, {
+      paper: "A3"
+      // paper: "A4"
+    }, function (error) {
+      if (error) {
+        console.log('Error connecting to plotter');
+        console.log(error);
+        reject(error);
+      }
+      console.log('Connected to plotter');
+      // plotter.selectPen(4);
+      plotter.setVelocity(1.0);
+      resolve();
+    });
+  });
+}
+
+function moveTo(_e, x, y) {
+  console.log('HPGL Moving to: ', x, y)
+  plotter.moveTo(x, y);
+}
+
+function drawRectangle(_e, x, y, opts) {
+  console.log('Drawing rectangle: ', x, y, opts);
+  plotter.drawRectangle(x, y, opts);
+}
+
+function setVelocity(_e, v) {
+  plotter.setVelocity(v);
+}
+
+function drawText(_e, text, opts) {
+  console.log('Main process Drawing text: ', text, opts);
+  plotter.drawText(text, opts);
+}
+
+function drawLine(_e, x, y, opts) {
+  plotter.drawLine(x, y, opts);
+}
+
+function drawLines(_e, lines) {
+  plotter.drawLines(lines);
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+  // ipcMain.handle("setupComplete", setupComplete);
+  ipcMain.handle("fit", fit);
+  ipcMain.handle("fitToSize", fitToSize);
+  ipcMain.handle("zoom", zoom);
+  ipcMain.handle("refresh", refresh);
+  ipcMain.handle("snapshot", snapshot);
+  ipcMain.handle("readFile", readFile);
+
+  ipcMain.handle("initializePlotter", initializePlotter);
+  ipcMain.handle("moveTo", moveTo);
+  ipcMain.handle("drawRectangle", drawRectangle);
+  ipcMain.handle("drawText", drawText);
+  ipcMain.handle("setVelocity", setVelocity);
+  ipcMain.handle("drawLine", drawLine);
+  ipcMain.handle("drawLines", drawLines);
+
+  createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -195,11 +315,3 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-exports.fit = fit;
-exports.zoom = zoom;
-exports.refresh = refresh;
-exports.snapshot = snapshot;
-exports.setupComplete = setupComplete;
