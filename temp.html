@@ -6,12 +6,17 @@
     <script type="text/javascript" src="dist/dist.js"></script>
     <script type="text/javascript" src="dist/hpgl.js"></script>
     <script src="file:///Users/jmcgill/src/p5-preview/examples/letter_grid.js"></script>
-
-    <!--<script src="file:///Users/jmcgill/src/p5.js-hpgl/dist/p5.hpgl.js"></script>-->
     <script type="text/javascript">
         const parameters = {
-            scale: 1.9232558139534883,
+            scale: 2.453488372093023,
             seed: 5
+        }
+
+        const A3 = {
+            width: 295,
+            height: 215 * 2,
+            plottable_width: 276,
+            plottable_height: 403,
         }
     </script>
     <style>
@@ -30,10 +35,14 @@
             width: 100%;
         }
 
+        #paper {
+            margin-top: 15px;
+        }
+
         #cover {
-            height: 827;
-            width: 536.5883720930233;
-            margin: 0 auto;
+            height: 1055;
+            width: 723.7790697674418;
+            margin: auto auto;
             overflow: hidden;
             background: white;
         }
@@ -42,48 +51,6 @@
             margin: 0;
             padding: 0;
             background: #efefef;
-        }
-
-        .box {
-            position: relative;
-            width: 536.5883720930233;
-            height: 827;
-            margin: 20 auto;
-        }
-
-        .box::before,
-        .box::after {
-            content: '';
-            position: absolute;
-            bottom: 12px;
-            width: 40%;
-            height: 10px;
-            box-shadow: 0 5px 14px rgba(0,0,0,.7);
-            z-index: -1;
-            transition: all .3s ease-in-out;
-        }
-
-        .box::before {
-            left: 15px;
-            transform: skew(-5deg) rotate(-5deg);
-        }
-
-        .box::after {
-            right: 15px;
-            transform: skew(5deg) rotate(5deg);
-        }
-
-        .box:hover::before,
-        .box:hover::after {
-            box-shadow: 0 2px 14px rgba(0,0,0,.4);
-        }
-
-        .box:hover::before {
-            left: 5px;
-        }
-
-        .box:hover::after {
-            right: 5px;
         }
 
         button {

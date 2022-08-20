@@ -1,45 +1,55 @@
-# electron-quick-start
+# P5 Plotter Preview
 
-**Clone and run for a quick way to see Electron in action.**
+This Electron app provides real-time previews of P5.js programs, with the ability to send the output to HPGL driven
+pen plotters.
 
-This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
+## Development
 
-**Use this app along with the [Electron API Demos](https://electronjs.org/#get-started) app for API code examples to help you get started.**
-
-A basic Electron application needs just these files:
-
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
-
-You can learn more about each of these components within the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start).
-
-## To Use
-
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies
-npm install
-# Run the app
-npm start
+```
+yarn install
+yarn build
+yarn start /absolute/path/to/p5_sketch.js
 ```
 
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
 
-## Resources for Learning Electron
+## Design
+The app monitors the provided p5 sketch file, and refreshes on every change.
 
-- [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
-- [electronjs.org/community#boilerplates](https://electronjs.org/community#boilerplates) - sample starter apps created by the community
-- [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
-- [electron/simple-samples](https://github.com/electron/simple-samples) - small applications with ideas for taking them further
-- [electron/electron-api-demos](https://github.com/electron/electron-api-demos) - an Electron app that teaches you how to use Electron
-- [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
+Plotting capabilities are provided by a custom P5.js renderer. Since HPGL plotters support only a very limited set
+of commands, most P5 commands are re-implemented to approximate the output using line segments. To support debugging,
+a non-plotting mode in which the output is rendered to the P5 canvas is provided.
 
-## License
+This repo includes a forked version of the hpgl.js npm package which includes some small fixes to make it work with
+the 7475A pen plotter and to fix some race conditions.
 
-[CC0 1.0 (Public Domain)](LICENSE.md)
+To make a P5.js sketch plottable, setupComplete() must be called after the createCanvas() command. 
+
+The following example draws calibration rectangles (one in each corner) for an A3 page. Note that the plottable area
+is slightly smaller than the full page size due to plotter margins.
+
+```
+// This example can be used to validate the four plottable extremes on a piece of A3 paper. It draws a small square
+// in each corner.
+async function setup() {
+    createCanvas(A3.width, A3.height, HPGL);
+    setupComplete();
+
+    stroke(0, 0, 0);
+    rectMode(CORNER);
+
+    // Top Left
+    rect(0, 0, 2, 2);
+
+    // Top Right
+    rect(A3.plottable_width - 2, 0, 2, 2);
+
+    // Bottom Left
+    rect(0, A3.plottable_height - 2, 2, 2);
+
+    // Bottom Right
+    rect(A3.plottable_width - 2, A3.plottable_height - 2, 2, 2);
+}
+
+function draw() {
+}
+```

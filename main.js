@@ -14,7 +14,7 @@ const saverTemplate = handlebars.compile('' + fs.readFileSync('templates/saver-t
 // Default to fit
 let inFitMode = true;
 
-let scale = 1.0;
+let scale = -1;
 let rightCrop = 0;
 let bottomCrop = 0;
 let canvasLeft = 0;
@@ -30,6 +30,7 @@ function reload() {
   const args = process.argv;
   const filename = process.argv[2];
 
+  // if (scale !== -1) scale = 1.5;
   const template = handlebars.compile('' + fs.readFileSync('templates/template.html'));
   fs.writeFileSync('temp.html', template({
     filename: filename,
@@ -45,18 +46,14 @@ function reload() {
   mainWindow.loadFile('temp.html');
 }
 
-// function setupComplete() {
-//   console.log('**** Calling setup complete');
-//   if (inFitMode) {
-//     console.log('Sending trigger fit')
-//     const bounds = mainWindow.getBounds();
-//     mainWindow.webContents.send('triggerFit', bounds);
-//   } else {
-//     mainWindow.webContents.send('trigger-zoom');
-//   }
-// }
+let originalHeight;
+let originalWidth;
 
 function fitToSize(e, height, width) {
+  // if (!inFitMode) return;
+  originalHeight = height;
+  originalWidth = width;
+
   console.log('Running fit function');
   console.log('Requested height/width', height, width);
 
@@ -108,11 +105,12 @@ function fit(height, width, windowHeight, windowWidth) {
   }
 }
 
-function zoom(height, width) {
+function zoom(e, height, width) {
+  console.log('Zooming - original size was', originalHeight, originalWidth);
   inFitMode = false;
-  scale = 1.0;
-  scaledHeight = height;
-  scaledWidth = width;
+  scale = 10.0;
+  scaledHeight = originalHeight * scale;
+  scaledWidth = originalWidth * scale;
   reload();
 }
 

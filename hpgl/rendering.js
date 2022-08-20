@@ -53,13 +53,37 @@ module.exports = function(p5) {
             this._isdefaultGraphics = true;
             this._renderer.resize(w, h);
             this._renderer._applyDefaults();
+
+            // Translate so that (0, 0) is the first position at which the plotter can actually draw/reach
+            // (This accounts for the left margin on the plotter)
+            this.translate(19, 0);
         }
         if (renderer === constants.NoHPGL) {
             var c = graphics.elt;
             this._setProperty('_renderer', new p5.RendererHPGL(c, w, h, this, true, false));
             this._isdefaultGraphics = true;
-            this._renderer.resize(w * 3.7, h * 3.7);
+
+            // TODO(jimmy): Should this be 10?
+            // Adjust the scale to either fit content to the screen or show at 1:1
+            let scale = 1;
+            if (parameters.scale !== -1) {
+                scale = parameters.scale;
+            }
+
+            console.log('Resizing to: ', w * scale, h * scale, w, h);
+            this._renderer.resize(w * scale, h * scale);
             this._renderer._applyDefaults();
+            this.scale(scale);
+
+            // Translate so that (0, 0) is the first position at which the plotter can actually draw/reach
+            // this.translate(19, 0);
+
+            // Draw margins. These indicate where the plotter cannot draw.
+            p5.Renderer2D.prototype.stroke.call(this._renderer, 255, 0, 0, 0);
+            p5.Renderer2D.prototype.fill.call(this._renderer, 255, 0, 0, 128);
+
+            p5.Renderer2D.prototype.rect.call(this._renderer, [276 * scale, 0, 19 * scale, h * scale]);
+            p5.Renderer2D.prototype.rect.call(this._renderer, [0, 403 * scale, w * scale, 500]);
         }
         return this._renderer;
     };

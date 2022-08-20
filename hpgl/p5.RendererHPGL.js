@@ -68,11 +68,12 @@ module.exports = function(p5) {
 
                         const op = that.operations.shift();
                         op();
-                    }, 0);
+                    }, 100);
                 });
             }, 1000);
         } else {
             // console.log('Running in Virtual Plotter mode');
+            // Run with a small interval delay so electron has time to process events
             setInterval(function () {
                 // console.log('Running operations heartbeat');
                 if (that.operations.length === 0) {
@@ -81,7 +82,7 @@ module.exports = function(p5) {
 
                 const op = that.operations.shift();
                 op();
-            }, 0);
+            }, 100);
         }
 
         // setInterval(function () {
@@ -108,29 +109,6 @@ module.exports = function(p5) {
     RendererHPGL.prototype._applyDefaults = function() {
         p5.Renderer2D.prototype._applyDefaults.call(this);
         this.drawingContext.lineWidth = 1.5;
-
-        if (!this.plotForReal) {
-            // Constant that makes the pen width look about right.
-            // this.scale(3.7);
-
-            p5.Renderer2D.prototype.background.call(this, 'white');
-            // p5.Renderer2D.prototype.scale.call(this, 3.7, 3.7);
-
-            // Draw margins
-            p5.Renderer2D.prototype.stroke.call(this, 255, 0, 0, 0);
-            p5.Renderer2D.prototype.fill.call(this, 255, 0, 0, 128);
-
-            p5.Renderer2D.prototype.rect.call(this, [0, 0, 19, height]);
-            p5.Renderer2D.prototype.rect.call(this, [width-19, 0, 19, height]);
-
-            // Reset fill
-            p5.Renderer2D.prototype.fill.call(this, 255, 0, 0, 0);
-
-            //p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0);
-            //p5.Renderer2D.prototype.fill.call(this, 0, 0, 0, 0);
-            // p5.Renderer2D.prototype.line.call(this, 0, 0, 50, 50);
-            // p5.Renderer2D.prototype.stroke.call(this, 0, 0, 0);
-        }
     };
 
     RendererHPGL.prototype.line = function(x1, y1, x2, y2) {
@@ -506,20 +484,20 @@ module.exports = function(p5) {
 
         // Simpolify our vertices
         const points = [];
-        for (let i = 1; i < vertices.length; ++i) {
+        for (let i = 0; i < vertices.length; ++i) {
             points.push({
                 x: vertices[i][0],
                 y: vertices[i][1],
             })
         }
-        // const simplified = simplify(points, 10);
-        // vertices = [];
-        // for (let i = 1; i < simplified.length; ++i) {
-        //     vertices.push([
-        //         simplified[i].x,
-        //         simplified[i].y
-        //     ]);
-        // }
+        const simplified = simplify(points, 1);
+        vertices = [];
+        for (let i = 0; i < simplified.length; ++i) {
+            vertices.push([
+                simplified[i].x,
+                simplified[i].y
+            ]);
+        }
 
         for (let i = 1; i < vertices.length; ++i) {
             // Apply the current transforms

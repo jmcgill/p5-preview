@@ -28,22 +28,20 @@ window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 // });
 
 window.addEventListener('DOMContentLoaded', () => {
-    console.log('Setting up onTriggerFIt');
-    window.electronApi.onTriggerFit((_event, value) => {
-        console.log('**** TRIGGER FIT CALLED');
-        console.log('triggering fit');
-        console.log(_event, value);
-        const bounds = remote.getCurrentWindow().getBounds();
-        const height = $('#defaultCanvas0').height();
-        const width = $('#defaultCanvas0').width();
-        console.log('Current height is: ', height, width);
-        //main.fit(height, width,bounds.height, bounds.width, false);
-
-        window.electronApi.fit(requestedHeight, requestedWidth, bounds.height, bounds.width, false);
-
-
-        console.log('Finished calling main fit');
-    })
+    // if (parameters.scale === -1) {
+    //     window.electronApi.onTriggerFit((_event, value) => {
+    //         console.log('**** TRIGGER FIT CALLED');
+    //         console.log('triggering fit');
+    //         console.log(_event, value);
+    //         const bounds = remote.getCurrentWindow().getBounds();
+    //         const height = $('#defaultCanvas0').height();
+    //         const width = $('#defaultCanvas0').width();
+    //         console.log('Current height is: ', height, width);
+    //         //main.fit(height, width,bounds.height, bounds.width, false);
+    //
+    //         window.electronApi.fit(requestedHeight, requestedWidth, bounds.height, bounds.width, false);
+    //     })
+    // }
 });
 
 function fit(bounds) {
@@ -66,11 +64,12 @@ function fit(bounds) {
 // });
 
 function zoom() {
-    const height = $('#defaultCanvas0').height();
-    const width = $('#defaultCanvas0').width();
-
-    // REPLACE
-    window.electronApi.zoom(height, width, true);
+    // const height = $('#defaultCanvas0').height();
+    // const width = $('#defaultCanvas0').width();
+    //
+    // // REPLACE
+    //window.electronApi.zoom(height, width); // , true);
+    window.electronApi.zoom(); // , true);
 }
 
 function refresh() {
@@ -92,7 +91,10 @@ function setupComplete() {
     console.log('Current height is: ', height, width);
     //main.fit(height, width,bounds.height, bounds.width, false);
 
-    window.electronApi.fitToSize(height, width);
+    console.log('SCALE IS: ', parameters.scale);
+    if (parameters.scale === -1) {
+        window.electronApi.fitToSize(height, width);
+    }
 }
 
 window['setupComplete'] = setupComplete;

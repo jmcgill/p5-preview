@@ -1,3 +1,5 @@
+// Plots all letters in the P1 handwriting font in a grid for debugging purposes.
+
 let requestedHeight = 1, requestedWidth = 1;
 let scales = 3.7;
 
@@ -848,12 +850,15 @@ class SVGFont {
             const col = (count % cols);
             const row = Math.floor(count / cols);
 
-            push();
-            translate((col * 700) + 500, (row * -350) + 2500);
-            this.drawGlyph(key, 250, col * 1, row * 700);
-            textSize(25);
-            text(key, 0, -125);
-            pop();
+            if (row > 20 && row !== 32) {
+                push();
+                translate((col * 700) + 600, (row * -350) + 2900);
+                console.log('Drawing glyph', key);
+                this.drawGlyph(key, 250, col * 1, row * 700);
+                textSize(25);
+                text(key.replace('glyph', ''), 0, -125);
+                pop();
+            }
 
             count += 1;
         }
@@ -893,6 +898,7 @@ class SVGFont {
         for (let component of components) {
             // console.log(component);
             if (component[0] === 'M') {
+                vertex(x, y);
                 endShape();
                 beginShape();
 
@@ -909,16 +915,17 @@ class SVGFont {
                 }
                 reflectedControl = [x, y];
             } else if (component[0] === 'Z' || component[0] === 'z') {
+                console.log('Zz NEEDS TESTING');
                 vertex(x0, y0);
                 endShape();
                 beginShape(POINTS);
                 reflectedControl = [x, y];
             } else if (component[0] === 'l') {
-                let m = component.substr(1).replace(/-/g, ',-');
+                let m = component.substr(1); // .replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
                 }
-                const p = m.split(',');
+                const p = m.split(' ');
                 const x1 = parseFloat(p[0], 10);
                 const y1 = parseFloat(p[1], 10);
                 //line(x, y, x + x1, y + y1);
@@ -928,6 +935,7 @@ class SVGFont {
                 y = y + y1;
                 reflectedControl = [x, y];
             } else if (component[0] === 'L') {
+                console.log('L NEEDS TESTING');
                 let m = component.substr(1).trim();//.replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
@@ -945,6 +953,7 @@ class SVGFont {
                 // y = y + y1;
                 reflectedControl = [x, y];
             } else if (component[0] === 'v') {
+                console.log('v NEEDS TESTING');
                 let m = component.substr(1).replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
@@ -960,18 +969,20 @@ class SVGFont {
                 y = y + y1;
                 reflectedControl = [x, y];
             } else if (component[0] === 'V') {
+                console.log('V NEEDS TESTING');
                 let m = component.substr(1).replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
                 }
-                const p = m.split(',');
+                const p = m.split(' ');
                 const y1 = parseFloat(p, 10);
 
                 vertex(x, y1);
                 y = y1;
                 reflectedControl = [x, y];
             } else if (component[0] === 'h') {
-                let m = component.substr(1).replace(/-/g, ',-');
+                console.log('h NEEDS TESTING');
+                let m = component.substr(1); // .replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
                 }
@@ -987,6 +998,7 @@ class SVGFont {
                 x = x + x1;
                 reflectedControl = [x, y];
             } else if (component[0] === 'H') {
+                console.log('H NEEDS TESTING');
                 let m = component.substr(1).replace(/-/g, ',-');
                 if (m[0] === ',') {
                     m = m.slice(1);
@@ -1216,76 +1228,35 @@ class SVGFont {
 }
 
 async function setup() {
-    createCanvas(width, height, HPGL);
-    // createCanvas(width, height);
-
-    // const data = fs.readFileSync('/Users/jimmy/Desktop/test2.svg');
-    //const data = fs.readFileSync('/Users/jimmy/out_planer.svg');
+    createCanvas(A3.width, A3.height, HPGL);
     setupComplete();
 
     stroke(0, 0, 0);
     rectMode(CORNER);
 
+    // Plot calibration points
+    // rect(0, 0, 2, 2);
+    // rect(A3.plottable_width - 2, 0, 2, 2);
+    // rect(0, A3.plottable_height - 2, 2, 2);
+    // rect(A3.plottable_width - 2, A3.plottable_height - 2, 2, 2);
+
+    // Flip everything vertically as SVG fonts are flipped for some reason.
     translate(279 / 2, 215);
     scale(1, -1);
     translate(-279 / 2, 100);
 
     scale(0.375, 0.375);
-
-    // Customize these for a specific SVG
-    // translate(0, 140)
-    // translate(-8, 0);
-    //scale(25.4 / 72.0, (25.4 / 72.0) * 1.00795);
     strokeWeight(0.5);
 
     // Letterhead
     push();
     scale(0.09)
 
-   // translate(560, 120);
-    const font2 = new SVGFont('/Users/jmcgill/P1.svg');
+    const font2 = new SVGFont('examples/P1.svg');
     await font2.load();
-    //font.drawGlyph("R", 20);
-    //font2.drawText("James McGill\n\nNew York, NY", 15, 1200);
+
     font2.drawGlyphGrid(11);
-    // textSize(50);
-    // text('HELLO', 0, 0);
-
-    // glyph1846 = y
-
     pop();
-
-    // Text
-    // push();
-    // translate(70, 150);
-    // // rect(10, 10, 0, 0);
-    // const font = new SVGFont('/Users/jmcgill/Downloads/EMSBrush.svg');
-    // await font.load();
-    // font.drawText(letter, 15, 2200);
-    // //font.drawText(letter, 20, 2200);
-    // pop();
-    //
-    // // Icon
-    // const icon = await window.electronApi.readFile('/Users/jmcgill/logo.svg');
-    // const parser = new DOMParser();
-    // const svg = parser.parseFromString(icon, "text/xml");
-    // const group = svg.getElementsByTagName('g')[0];
-    //
-    // push();
-    // scale(1.5, 1.5);
-    // translate(360, 0);
-    // drawGroup(group, {}, '');
-    // pop();
-
-
-    // scale(1, 0.3);
-    // scale(1);
-    let filter = '.*';
-    // let filter = 'cas9_all|Fills';
-
-    // const parser = new DOMParser();
-    // const svg = parser.parseFromString(data, "text/xml");
-    // drawGroup(svg.documentElement, {}, filter);
 }
 
 function draw() {

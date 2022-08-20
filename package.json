@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "rebuild": "electron-rebuild"
+    "rebuild": "electron-rebuild",
+    "build": "browserify hpgl/index.js > dist/hpgl.js && browserify renderer.js > dist/dist.js"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
