@@ -28,7 +28,7 @@
     "geom2d": "0.0.4",
     "handlebars": "^4.7.3",
     "hpgl": "^0.8.7-10",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "serialport": "^10.4.0",
     "simplify-js": "^1.2.4",
     "time-events-manager": "^0.1.1",
